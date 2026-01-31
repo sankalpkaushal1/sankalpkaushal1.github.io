@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Study: Enterprise Cloud Migration | Sankalp's Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0f1a;
+            --bg-secondary: #111827;
+            --bg-card: #1a2234;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #22d3ee;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-subtle: rgba(255,255,255,0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Noise texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            padding: 4rem 0;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -20%;
+            width: 60%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: fadeUp 0.6s ease forwards;
+        }
+
+        .hero-label::before {
+            content: '';
+            width: 2rem;
+            height: 2px;
+            background: var(--accent-cyan);
+        }
+
+        .hero h1 {
+            font-family: 'Fraunces', serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: fadeUp 0.6s ease 0.1s forwards;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: fadeUp 0.6s ease 0.2s forwards;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+            opacity: 0;
+            animation: fadeUp 0.6s ease 0.3s forwards;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+        }
+
+        .metric-card.green::before {
+            background: linear-gradient(90deg, var(--accent-green), #34d399);
+        }
+
+        .metric-card.amber::before {
+            background: linear-gradient(90deg, var(--accent-amber), #fbbf24);
+        }
+
+        .metric-card.rose::before {
+            background: linear-gradient(90deg, var(--accent-rose), #fb7185);
+        }
+
+        .metric-value {
+            font-family: 'Fraunces', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Section Styling */
+        section {
+            padding: 6rem 0;
+            position: relative;
+        }
+
+        .section-header {
+            margin-bottom: 3rem;
+        }
+
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 1rem;
+        }
+
+        .section-label svg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .section-title {
+            font-family: 'Fraunces', serif;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .section-description {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+        }
+
+        /* Context Section */
+        .context-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .context-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1rem;
+            padding: 2rem;
+        }
+
+        .context-card h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .context-card h3 svg {
+            width: 1.5rem;
+            height: 1.5rem;
+            color: var(--accent-blue);
+        }
+
+        .context-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent-blue), var(--accent-cyan), var(--accent-green));
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: flex-end;
+            padding-right: calc(50% + 3rem);
+            position: relative;
+            margin-bottom: 3rem;
+        }
+
+        .timeline-item:nth-child(even) {
+            justify-content: flex-start;
+            padding-right: 0;
+            padding-left: calc(50% + 3rem);
+        }
+
+        .timeline-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            width: 1rem;
+            height: 1rem;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.5);
+        }
+
+        .timeline-item:nth-child(odd) .timeline-dot {
+            right: calc(-3rem - 0.5rem + 1px);
+        }
+
+        .timeline-item:nth-child(even) .timeline-dot {
+            left: calc(-3rem - 0.5rem + 1px);
+        }
+
+        .timeline-phase {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* My Role Section */
+        .role-content {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .role-highlights {
+            position: sticky;
+            top: 2rem;
+        }
+
+        .role-highlight-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 0.75rem;
+            border: 1px solid var(--border-subtle);
+            transition: border-color 0.3s ease;
+        }
+
+        .role-highlight-item:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .role-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .role-icon svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            color: white;
+        }
+
+        .role-highlight-text h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .role-highlight-text p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .role-details h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--accent-cyan);
+        }
+
+        .role-details p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Tools Section */
+        .tools-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 2rem;
+        }
+
+        .tool-tag {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .tool-tag:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        /* Challenges & Solutions */
+        .challenges-grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .challenge-card {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: var(--bg-secondary);
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .challenge-problem, .challenge-solution {
+            padding: 2rem;
+        }
+
+        .challenge-problem {
+            background: rgba(244, 63, 94, 0.05);
+            border-right: 1px solid var(--border-subtle);
+        }
+
+        .challenge-solution {
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .challenge-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .challenge-problem .challenge-label {
+            color: var(--accent-rose);
+        }
+
+        .challenge-solution .challenge-label {
+            color: var(--accent-green);
+        }
+
+        .challenge-text {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Outcomes Section */
+        .outcomes-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .outcome-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 1rem;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .outcome-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(to top, rgba(59, 130, 246, 0.1), transparent);
+            pointer-events: none;
+        }
+
+        .outcome-number {
+            font-family: 'Fraunces', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .outcome-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .outcome-desc {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        /* Lessons Section */
+        .lessons-list {
+            display: grid;
+            gap: 1.5rem;
+            counter-reset: lessons;
+        }
+
+        .lesson-item {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: 1rem;
+            border: 1px solid var(--border-subtle);
+            counter-increment: lessons;
+        }
+
+        .lesson-number {
+            font-family: 'Fraunces', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            opacity: 0.5;
+            line-height: 1;
+        }
+
+        .lesson-number::before {
+            content: counter(lessons, decimal-leading-zero);
+        }
+
+        .lesson-content h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .lesson-content p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            padding: 6rem 0;
+            background: linear-gradient(to bottom, transparent, rgba(59, 130, 246, 0.05));
+        }
+
+        .cta-title {
+            font-family: 'Fraunces', serif;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-text {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .cta-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .cta-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            background: var(--accent-blue);
+            color: white;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .cta-link:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .cta-link.secondary {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+        }
+
+        .cta-link.secondary:hover {
+            border-color: var(--accent-blue);
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .timeline::before {
+                left: 1rem;
+            }
+            
+            .timeline-item,
+            .timeline-item:nth-child(even) {
+                padding-left: 4rem;
+                padding-right: 0;
+                justify-content: flex-start;
+            }
+            
+            .timeline-item:nth-child(odd) .timeline-dot,
+            .timeline-item:nth-child(even) .timeline-dot {
+                left: calc(1rem - 0.5rem);
+                right: auto;
+            }
+            
+            .role-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .challenge-card {
+                grid-template-columns: 1fr;
+            }
+            
+            .challenge-problem {
+                border-right: none;
+                border-bottom: 1px solid var(--border-subtle);
+            }
+            
+            .outcomes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Flag for review */
+        .review-flag {
+            display: inline-block;
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-amber);
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+            margin-left: 0.5rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <span class="hero-label">Case Study</span>
+            <h1>Enterprise <span>Cloud Migration</span> Program</h1>
+            <p class="hero-subtitle">Leading cross-functional coordination for a $5M+ Azure migration across 12 global business units at a Fortune 500 financial services firm.<span class="review-flag">Review: OK to name State Street?</span></p>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">30%</div>
+                    <div class="metric-label">Efficiency Improvement</div>
+                </div>
+                <div class="metric-card green">
+                    <div class="metric-value">40%</div>
+                    <div class="metric-label">Faster Deployments</div>
+                </div>
+                <div class="metric-card amber">
+                    <div class="metric-value">12</div>
+                    <div class="metric-label">Global Business Units</div>
+                </div>
+                <div class="metric-card rose">
+                    <div class="metric-value">50+</div>
+                    <div class="metric-label">JIRA Stories/Sprint</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Context Section -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Context
+                </span>
+                <h2 class="section-title">The Challenge</h2>
+                <p class="section-description">A major financial institution needed to migrate critical infrastructure to Azure while maintaining compliance and minimizing disruption across global operations.</p>
+            </div>
+            
+            <div class="context-grid">
+                <div class="context-card">
+                    <h3>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        Organization
+                    </h3>
+                    <p>Fortune 500 financial services company with operations spanning NA, EMEA, and APAC regions. Strict regulatory requirements and zero tolerance for downtime.<span class="review-flag">Review: OK to be specific?</span></p>
+                </div>
+                <div class="context-card">
+                    <h3>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Timeline
+                    </h3>
+                    <p>6-month engagement as Technical Project Manager, supporting quality assurance and data migration workstreams within a larger multi-year transformation program.</p>
+                </div>
+                <div class="context-card">
+                    <h3>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        Team Scale
+                    </h3>
+                    <p>Coordinated with an 18-person development team, multiple QA engineers, and stakeholders across 12 business units in three regions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section style="background: var(--bg-secondary);">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                    Project Phases
+                </span>
+                <h2 class="section-title">How We Got There</h2>
+            </div>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-dot"></div>
+                        <span class="timeline-phase">Phase 1</span>
+                        <h3 class="timeline-title">Discovery & Planning</h3>
+                        <p class="timeline-desc">Mapped existing infrastructure, identified dependencies, and built the migration roadmap with stakeholder sign-off across all regions.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-dot"></div>
+                        <span class="timeline-phase">Phase 2</span>
+                        <h3 class="timeline-title">Process Design</h3>
+                        <p class="timeline-desc">Established Agile ceremonies, JIRA workflows, and reporting cadences. Created documentation standards for cross-regional consistency.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-dot"></div>
+                        <span class="timeline-phase">Phase 3</span>
+                        <h3 class="timeline-title">Migration Execution</h3>
+                        <p class="timeline-desc">Coordinated sprint execution across development and QA teams. Managed 50+ stories per sprint with daily standups and risk tracking.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="timeline-dot"></div>
+                        <span class="timeline-phase">Phase 4</span>
+                        <h3 class="timeline-title">Validation & Handoff</h3>
+                        <p class="timeline-desc">Led UAT coordination, created transition documentation, and ensured knowledge transfer to operational teams.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- My Role Section -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    My Role
+                </span>
+                <h2 class="section-title">What I Owned</h2>
+            </div>
+            
+            <div class="role-content">
+                <div class="role-highlights">
+                    <div class="role-highlight-item">
+                        <div class="role-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                        </div>
+                        <div class="role-highlight-text">
+                            <h4>Sprint Management</h4>
+                            <p>50+ stories per sprint across multiple teams</p>
+                        </div>
+                    </div>
+                    <div class="role-highlight-item">
+                        <div class="role-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        </div>
+                        <div class="role-highlight-text">
+                            <h4>Stakeholder Coordination</h4>
+                            <p>12 business units across 3 global regions</p>
+                        </div>
+                    </div>
+                    <div class="role-highlight-item">
+                        <div class="role-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        </div>
+                        <div class="role-highlight-text">
+                            <h4>Reporting & Visibility</h4>
+                            <p>Dashboards, status reports, executive updates</p>
+                        </div>
+                    </div>
+                    <div class="role-highlight-item">
+                        <div class="role-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        </div>
+                        <div class="role-highlight-text">
+                            <h4>Risk Management</h4>
+                            <p>Issue tracking, escalation, mitigation planning</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="role-details">
+                    <h3>Cross-Functional Coordination</h3>
+                    <p>Served as the connective tissue between development, QA, infrastructure, and business stakeholders. Ran daily standups, managed sprint planning and retrospectives, and ensured blockers were surfaced and resolved quickly. Timezone coordination across NA, EMEA, and APAC required careful scheduling and asynchronous communication strategies.</p>
+                    
+                    <h3>Agile Process Ownership</h3>
+                    <p>Managed the JIRA board end-to-end: story creation, acceptance criteria refinement, sprint grooming, and velocity tracking. Introduced workflow improvements that reduced cycle time and improved estimation accuracy over the engagement.</p>
+                    
+                    <h3>Quality & Documentation</h3>
+                    <p>Partnered closely with QA to ensure test coverage and defect tracking. Created and maintained Confluence documentation for runbooks, decision logs, and process standards that enabled consistent execution across teams.</p>
+                    
+                    <div class="tools-grid">
+                        <span class="tool-tag">JIRA</span>
+                        <span class="tool-tag">Confluence</span>
+                        <span class="tool-tag">Azure DevOps</span>
+                        <span class="tool-tag">Power BI</span>
+                        <span class="tool-tag">SharePoint</span>
+                        <span class="tool-tag">Microsoft Teams</span>
+                        <span class="tool-tag">Excel</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Challenges Section -->
+    <section style="background: var(--bg-secondary);">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    Challenges & Solutions
+                </span>
+                <h2 class="section-title">Problems I Solved</h2>
+            </div>
+            
+            <div class="challenges-grid">
+                <div class="challenge-card">
+                    <div class="challenge-problem">
+                        <span class="challenge-label">
+                            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+                            Challenge
+                        </span>
+                        <p class="challenge-text">Stakeholders across 12 business units had inconsistent visibility into migration progress, leading to duplicated questions and misaligned expectations.</p>
+                    </div>
+                    <div class="challenge-solution">
+                        <span class="challenge-label">
+                            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                            Solution
+                        </span>
+                        <p class="challenge-text">Built a centralized Power BI dashboard with real-time status, RAG indicators, and drill-down capability by region. Established weekly stakeholder digest emails summarizing key updates.</p>
+                    </div>
+                </div>
+                
+                <div class="challenge-card">
+                    <div class="challenge-problem">
+                        <span class="challenge-label">
+                            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+                            Challenge
+                        </span>
+                        <p class="challenge-text">Sprint velocity was unpredictable due to unclear acceptance criteria and scope creep from late-stage requirement changes.</p>
+                    </div>
+                    <div class="challenge-solution">
+                        <span class="challenge-label">
+                            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                            Solution
+                        </span>
+                        <p class="challenge-text">Introduced a stricter definition of ready with mandatory acceptance criteria templates. Implemented a change request process that required impact assessment before mid-sprint additions.</p>
+                    </div>
+                </div>
+                
+                <div class="challenge-card">
+                    <div class="challenge-problem">
+                        <span class="challenge-label">
+                            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+                            Challenge
+                        </span>
+                        <p class="challenge-text">Timezone gaps between NA, EMEA, and APAC teams created handoff delays and blocked progress during off-hours.</p>
+                    </div>
+                    <div class="challenge-solution">
+                        <span class="challenge-label">
+                            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                            Solution
+                        </span>
+                        <p class="challenge-text">Designed an asynchronous handoff protocol with structured Slack updates and Confluence status pages. Scheduled overlapping sync windows to ensure at least one touchpoint between all regions daily.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Outcomes Section -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Outcomes
+                </span>
+                <h2 class="section-title">Results Delivered</h2>
+            </div>
+            
+            <div class="outcomes-grid">
+                <div class="outcome-card">
+                    <div class="outcome-number">30%</div>
+                    <div class="outcome-title">Operational Efficiency Gain</div>
+                    <div class="outcome-desc">Streamlined workflows and reduced manual handoffs through process automation and clearer ownership models.</div>
+                </div>
+                <div class="outcome-card">
+                    <div class="outcome-number">40%</div>
+                    <div class="outcome-title">Faster Deployment Cycles</div>
+                    <div class="outcome-desc">Improved sprint predictability and reduced blockers enabled more frequent, reliable releases.</div>
+                </div>
+                <div class="outcome-card">
+                    <div class="outcome-number">100%</div>
+                    <div class="outcome-title">On-Time Milestone Delivery</div>
+                    <div class="outcome-desc">All critical migration milestones met within planned timelines despite complexity and scale.</div>
+                </div>
+                <div class="outcome-card">
+                    <div class="outcome-number">18→1</div>
+                    <div class="outcome-title">Unified Team Coordination</div>
+                    <div class="outcome-desc">Brought together an 18-person distributed team into a cohesive unit with shared processes and visibility.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lessons Section -->
+    <section style="background: var(--bg-secondary);">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                    Lessons Learned
+                </span>
+                <h2 class="section-title">What I'd Do Again (And What I'd Change)</h2>
+            </div>
+            
+            <div class="lessons-list">
+                <div class="lesson-item">
+                    <div class="lesson-number"></div>
+                    <div class="lesson-content">
+                        <h4>Invest in visibility infrastructure early</h4>
+                        <p>The Power BI dashboard paid dividends throughout the project. Building it in week two instead of week six would have prevented early miscommunications and reduced the "status update" meeting burden.</p>
+                    </div>
+                </div>
+                <div class="lesson-item">
+                    <div class="lesson-number"></div>
+                    <div class="lesson-content">
+                        <h4>Definition of Ready is non-negotiable</h4>
+                        <p>Stories without clear acceptance criteria create downstream chaos. Holding the line on DoR requirements—even when it slows sprint starts—saves time overall.</p>
+                    </div>
+                </div>
+                <div class="lesson-item">
+                    <div class="lesson-number"></div>
+                    <div class="lesson-content">
+                        <h4>Asynchronous communication is a skill, not a workaround</h4>
+                        <p>Global teams can't rely on synchronous meetings alone. Designing explicit handoff protocols and written-first communication norms makes distributed work sustainable.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2 class="cta-title">Explore More</h2>
+            <p class="cta-text">See the tools and frameworks I used to drive this project.</p>
+            <div class="cta-links">
+                <a href="#" class="cta-link">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    View Dashboard
+                </a>
+                <a href="#" class="cta-link secondary">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    Risk Framework
+                </a>
+                <a href="#" class="cta-link secondary">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Communication Templates
+                </a>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
