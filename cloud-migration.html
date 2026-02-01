@@ -48,7 +48,6 @@
             padding: 0 1.5rem;
         }
 
-        /* Navigation */
         nav {
             padding: 1.5rem 0;
             background: var(--bg-white);
@@ -89,7 +88,6 @@
             height: 1rem;
         }
 
-        /* Hero Section */
         .hero {
             padding: 4rem 0 3rem;
             background: var(--bg-white);
@@ -122,7 +120,6 @@
             margin-bottom: 2rem;
         }
 
-        /* Metrics Grid */
         .metrics-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -150,7 +147,6 @@
             color: var(--text-muted);
         }
 
-        /* Deliverables Section - Highlighted */
         .deliverables-section {
             padding: 3rem 0;
             background: var(--bg-white);
@@ -219,7 +215,31 @@
             color: var(--text-muted);
         }
 
-        /* Content Sections */
+        .deliverable-card.clickable {
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+
+        .deliverable-card.clickable:hover {
+            transform: translateY(-4px);
+        }
+
+        .view-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            color: var(--accent-primary);
+            margin-top: 0.75rem;
+            font-weight: 500;
+        }
+
+        .view-link svg {
+            width: 0.875rem;
+            height: 0.875rem;
+        }
+
         section {
             padding: 3rem 0;
         }
@@ -234,14 +254,12 @@
             margin-bottom: 0.5rem;
         }
 
-        /* Context */
         .context-text {
             font-size: 1rem;
             color: var(--text-secondary);
             max-width: 700px;
         }
 
-        /* My Contributions */
         .contributions-list {
             display: grid;
             gap: 1.5rem;
@@ -280,7 +298,6 @@
             color: var(--text-secondary);
         }
 
-        /* Go-Live Section */
         .golive-section {
             background: var(--bg-white);
             border: 1px solid var(--border-light);
@@ -301,7 +318,6 @@
             color: var(--text-secondary);
         }
 
-        /* Tools */
         .tools-grid {
             display: flex;
             flex-wrap: wrap;
@@ -318,7 +334,6 @@
             color: var(--text-secondary);
         }
 
-        /* CTA Section */
         .cta-section {
             text-align: center;
             padding: 3rem 0;
@@ -360,7 +375,6 @@
             border-color: var(--accent-primary);
         }
 
-        /* Responsive */
         @media (max-width: 700px) {
             .metrics-grid,
             .deliverables-grid {
@@ -374,7 +388,6 @@
     </style>
 </head>
 <body>
-    <!-- Navigation -->
     <nav>
         <div class="container nav-content">
             <a href="index.html" class="nav-logo">SK</a>
@@ -385,7 +398,6 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
     <section class="hero">
         <div class="container">
             <span class="hero-label">Case Study</span>
@@ -409,19 +421,19 @@
         </div>
     </section>
 
-    <!-- Deliverables Section - Highlighted -->
     <section class="deliverables-section">
         <div class="container">
             <h2 class="section-title">What I Built</h2>
             
             <div class="deliverables-grid">
-                <div class="deliverable-card blue">
+                <a href="https://docs.google.com/spreadsheets/d/1St70mRuY1vtJn0tPfRwr_RWeqxkTTskx/edit?usp=sharing" target="_blank" class="deliverable-card blue clickable">
                     <div class="deliverable-icon">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                     </div>
                     <h3 class="deliverable-title">PM Tracker Dashboard</h3>
                     <p class="deliverable-desc">Custom Excel tracker for day-to-day process visibility</p>
-                </div>
+                    <span class="view-link">View in Google Sheets <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg></span>
+                </a>
                 
                 <div class="deliverable-card purple">
                     <div class="deliverable-icon">
@@ -442,7 +454,6 @@
         </div>
     </section>
 
-    <!-- Context Section -->
     <section>
         <div class="container">
             <span class="section-label">Context</span>
@@ -451,7 +462,6 @@
         </div>
     </section>
 
-    <!-- My Contributions Section -->
     <section>
         <div class="container">
             <span class="section-label">My Role</span>
@@ -491,13 +501,11 @@
                 </div>
             </div>
 
-            <!-- Go-Live Section -->
             <div class="golive-section">
                 <h3>Go-Live Coordination</h3>
                 <p>The go-live was a 2-day process. Before we started, I mapped out every potential blocker we might hit and what we'd do if it happened. We had a blocker meeting protocol ready, response plans documented, and nothing was a surprise. When issues came up, we already knew the playbook.</p>
             </div>
 
-            <!-- Tools -->
             <div class="tools-grid">
                 <span class="tool-tag">JIRA</span>
                 <span class="tool-tag">Confluence</span>
@@ -509,7 +517,6 @@
         </div>
     </section>
 
-    <!-- CTA Section -->
     <section class="cta-section">
         <div class="container">
             <div class="cta-links">
