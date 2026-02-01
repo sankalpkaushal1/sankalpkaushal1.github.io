@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Study: JIRA Board Design | Sankalp's Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #fafafa;
+            --bg-white: #ffffff;
+            --bg-subtle: #f5f5f5;
+            --accent-primary: #2563eb;
+            --accent-secondary: #3b82f6;
+            --accent-light: #eff6ff;
+            --accent-green: #059669;
+            --accent-green-light: #ecfdf5;
+            --accent-amber: #d97706;
+            --accent-amber-light: #fffbeb;
+            --accent-purple: #7c3aed;
+            --accent-purple-light: #f5f3ff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #525252;
+            --text-muted: #737373;
+            --border-light: #e5e5e5;
+            --border-subtle: #f0f0f0;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 12px 32px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Navigation */
+        nav {
+            padding: 1.5rem 0;
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: 'Fraunces', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-back:hover {
+            color: var(--accent-primary);
+        }
+
+        .nav-back svg {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 4rem 0 3rem;
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .hero-label {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-green);
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 {
+            font-family: 'Fraunces', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .hero-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+        }
+
+        /* What I Built Section */
+        .built-section {
+            padding: 3rem 0;
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .section-title {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .built-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .built-card {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-light);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+        }
+
+        .built-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .built-card h3 svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            color: var(--accent-green);
+        }
+
+        .built-card p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        /* Content Sections */
+        section {
+            padding: 3rem 0;
+        }
+
+        .section-label {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Context */
+        .context-text {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Initiatives */
+        .initiatives-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .initiative-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            text-align: center;
+        }
+
+        .initiative-card.purple { border-top: 3px solid var(--accent-purple); }
+        .initiative-card.blue { border-top: 3px solid var(--accent-primary); }
+        .initiative-card.green { border-top: 3px solid var(--accent-green); }
+
+        .initiative-card h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .initiative-card p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Structure List */
+        .structure-list {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .structure-item {
+            display: flex;
+            gap: 1rem;
+            align-items: start;
+            padding: 1rem;
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: 0.75rem;
+        }
+
+        .structure-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: var(--accent-light);
+            color: var(--accent-primary);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .structure-icon svg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .structure-content h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .structure-content p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        /* Dashboard Section */
+        .dashboard-features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .dashboard-feature {
+            background: var(--bg-subtle);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .dashboard-feature h4 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .dashboard-feature p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Tools */
+        .tools-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .tool-tag {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-light);
+            padding: 0.375rem 0.875rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Takeaway */
+        .takeaway-box {
+            background: var(--accent-green-light);
+            border: 1px solid #a7f3d0;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .takeaway-box h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--accent-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .takeaway-box p {
+            font-size: 0.925rem;
+            color: var(--text-secondary);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            padding: 3rem 0;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .cta-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .cta-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: var(--accent-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .cta-link:hover {
+            background: #1d4ed8;
+        }
+
+        .cta-link.secondary {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+        }
+
+        .cta-link.secondary:hover {
+            border-color: var(--accent-primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 700px) {
+            .built-grid,
+            .initiatives-grid,
+            .dashboard-features {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container nav-content">
+            <a href="index.html" class="nav-logo">SK</a>
+            <a href="index.html" class="nav-back">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                Back to Portfolio
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <span class="hero-label">Portfolio Project</span>
+            <h1>JIRA Board & Dashboard Design</h1>
+            <p class="hero-subtitle">Built a complete Agile project structure from scratch: custom workflows, sprint planning, and a real-time dashboard tracking 3 parallel AI initiatives.</p>
+        </div>
+    </section>
+
+    <!-- What I Built Section -->
+    <section class="built-section">
+        <div class="container">
+            <h2 class="section-title">What I Built</h2>
+            
+            <div class="built-grid">
+                <div class="built-card">
+                    <h3>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                        Scrum Board
+                    </h3>
+                    <p>Custom workflow with 5 statuses: To Do, In Progress, In Review, Blocked, Done</p>
+                </div>
+                
+                <div class="built-card">
+                    <h3>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        Real-Time Dashboard
+                    </h3>
+                    <p>9 gadgets tracking sprint health, velocity, blockers, and cross-initiative progress</p>
+                </div>
+                
+                <div class="built-card">
+                    <h3>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
+                        Custom Fields
+                    </h3>
+                    <p>Initiative tracking, Risk Level, Business Unit, and Blocker Reason fields</p>
+                </div>
+                
+                <div class="built-card">
+                    <h3>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Sprint Structure
+                    </h3>
+                    <p>4 sprints with realistic historical data showing velocity progression</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Context -->
+    <section>
+        <div class="container">
+            <span class="section-label">Context</span>
+            <h2 class="section-title">The Scenario</h2>
+            <p class="context-text">I designed this JIRA setup to simulate managing 3 parallel AI initiatives for an organization looking to improve operational efficiency. The goal: give stakeholders self-service access to progress without weekly status meetings.</p>
+            
+            <div class="initiatives-grid">
+                <div class="initiative-card purple">
+                    <h4>AI-Powered Staff Chatbot</h4>
+                    <p>Conversational AI for HR and IT queries</p>
+                </div>
+                <div class="initiative-card blue">
+                    <h4>Document Classification</h4>
+                    <p>Auto-categorize and route documents using ML</p>
+                </div>
+                <div class="initiative-card green">
+                    <h4>Meeting Summarizer</h4>
+                    <p>Generate notes and action items from recordings</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Board Structure -->
+    <section>
+        <div class="container">
+            <span class="section-label">Structure</span>
+            <h2 class="section-title">How I Organized It</h2>
+            
+            <div class="structure-list">
+                <div class="structure-item">
+                    <div class="structure-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    </div>
+                    <div class="structure-content">
+                        <h4>Epic → Story → Task Hierarchy</h4>
+                        <p>3 Epics (one per initiative), 15+ Stories with acceptance criteria, Tasks for technical work, and Bugs for defects</p>
+                    </div>
+                </div>
+                
+                <div class="structure-item">
+                    <div class="structure-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    </div>
+                    <div class="structure-content">
+                        <h4>Custom Workflow</h4>
+                        <p>To Do → In Progress → In Review → Done, with Blocked status for stuck items. Transitions allow moving back when needed.</p>
+                    </div>
+                </div>
+                
+                <div class="structure-item">
+                    <div class="structure-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <div class="structure-content">
+                        <h4>Sprint Cadence</h4>
+                        <p>1-week sprints. Sprint 1-2 completed (historical data), Sprint 3 active (current work), Sprint 4 planned (future)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard -->
+    <section>
+        <div class="container">
+            <span class="section-label">Dashboard</span>
+            <h2 class="section-title">AI Initiative Delivery Tracker</h2>
+            <p class="context-text">A single-pane view answering the questions stakeholders actually ask: Are we on track? What's stuck? How are initiatives progressing relative to each other?</p>
+            
+            <div class="dashboard-features">
+                <div class="dashboard-feature">
+                    <h4>Sprint Burndown</h4>
+                    <p>Work remaining in active sprint</p>
+                </div>
+                <div class="dashboard-feature">
+                    <h4>Sprint Health</h4>
+                    <p>Current sprint status overview</p>
+                </div>
+                <div class="dashboard-feature">
+                    <h4>Created vs Resolved</h4>
+                    <p>Incoming work vs completed</p>
+                </div>
+                <div class="dashboard-feature">
+                    <h4>Initiative Breakdown</h4>
+                    <p>Progress by AI initiative</p>
+                </div>
+                <div class="dashboard-feature">
+                    <h4>Issue Type Distribution</h4>
+                    <p>Stories vs Bugs vs Tasks</p>
+                </div>
+                <div class="dashboard-feature">
+                    <h4>Priority View</h4>
+                    <p>High/Medium/Low distribution</p>
+                </div>
+                <div class="dashboard-feature">
+                    <h4>Blocked Items</h4>
+                    <p>JQL filter surfacing stuck work</p>
+                </div>
+                <div class="dashboard-feature">
+                    <h4>In Progress</h4>
+                    <p>Active work visibility</p>
+                </div>
+                <div class="dashboard-feature">
+                    <h4>Sprint 3 Work</h4>
+                    <p>Current sprint item list</p>
+                </div>
+            </div>
+
+            <div class="tools-grid">
+                <span class="tool-tag">JIRA Cloud</span>
+                <span class="tool-tag">Scrum</span>
+                <span class="tool-tag">JQL</span>
+                <span class="tool-tag">Custom Fields</span>
+                <span class="tool-tag">Dashboards</span>
+                <span class="tool-tag">Filters</span>
+            </div>
+
+            <div class="takeaway-box">
+                <h3>Why This Matters</h3>
+                <p>This isn't just a demo board. It's how I think about project visibility: track initiative-level progress, surface blockers before they age, and give stakeholders answers without scheduling another meeting. Cross-initiative dependency tracking is what separates senior PMs from junior ones.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-links">
+                <a href="index.html" class="cta-link">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    Back to Portfolio
+                </a>
+                <a href="cloud-migration.html" class="cta-link secondary">View Cloud Migration Case Study</a>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
