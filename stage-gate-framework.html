@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT PMO Stage-Gate Framework | Alnylam Pharmaceuticals</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #fafafa; --bg-white: #ffffff; --text-primary: #1a1a1a;
+            --text-secondary: #525252; --text-muted: #737373; --border-light: #e5e5e5;
+            --accent-primary: #2563eb;
+            --gate-0: #059669; --gate-1: #d97706; --gate-2: #2563eb; --gate-3: #7c3aed; --gate-4: #dc2626;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.6; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+
+        /* Hero */
+        .hero { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 3rem 0 4rem; position: relative; }
+        .hero-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; }
+        .hero-logo { font-family: 'Fraunces', serif; font-size: 1.25rem; font-weight: 700; color: white; text-decoration: none; }
+        .back-link { display: inline-flex; align-items: center; gap: 0.5rem; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem; }
+        .back-link:hover { color: white; }
+        .hero-badge { display: inline-block; padding: 0.375rem 0.875rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 2rem; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; }
+        .hero h1 { font-family: 'Fraunces', serif; font-size: 2.5rem; font-weight: 700; line-height: 1.1; margin-bottom: 1rem; }
+        .hero-subtitle { font-size: 1.1rem; color: rgba(255,255,255,0.8); max-width: 600px; margin-bottom: 2rem; }
+
+        /* Before/After */
+        .before-after { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem; }
+        .ba-card { padding: 1.5rem; border-radius: 1rem; }
+        .ba-card.before { background: rgba(220, 38, 38, 0.15); border: 1px solid rgba(220, 38, 38, 0.3); }
+        .ba-card.after { background: rgba(5, 150, 105, 0.15); border: 1px solid rgba(5, 150, 105, 0.3); }
+        .ba-card h3 { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+        .ba-card.before h3 { color: #fca5a5; }
+        .ba-card.after h3 { color: #6ee7b7; }
+        .ba-card ul { list-style: none; font-size: 0.9rem; color: rgba(255,255,255,0.8); }
+        .ba-card li { padding: 0.25rem 0; padding-left: 1.25rem; position: relative; }
+        .ba-card.before li::before { content: "✗"; position: absolute; left: 0; color: #fca5a5; }
+        .ba-card.after li::before { content: "✓"; position: absolute; left: 0; color: #6ee7b7; }
+
+        /* Simulator */
+        .simulator { background: var(--bg-white); padding: 3rem 0; border-bottom: 1px solid var(--border-light); }
+        .simulator-header { text-align: center; margin-bottom: 2rem; }
+        .simulator-header h2 { font-family: 'Fraunces', serif; font-size: 1.75rem; margin-bottom: 0.5rem; }
+        .simulator-header p { color: var(--text-secondary); }
+
+        /* Project Card */
+        .project-card { background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%); border: 2px solid var(--accent-primary); border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 1.5rem; }
+        .project-icon { width: 4rem; height: 4rem; background: var(--accent-primary); border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; flex-shrink: 0; }
+        .project-info h3 { font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .project-info p { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
+        .project-meta { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        .project-tag { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.625rem; background: white; border-radius: 2rem; font-size: 0.75rem; color: var(--text-secondary); }
+
+        /* Pipeline */
+        .pipeline { position: relative; padding: 2rem 0; }
+        .pipeline-track { position: absolute; top: 50%; left: 5%; right: 5%; height: 4px; background: var(--border-light); transform: translateY(-50%); border-radius: 2px; z-index: 0; }
+        .pipeline-progress { position: absolute; top: 0; left: 0; height: 100%; background: linear-gradient(90deg, var(--gate-0), var(--gate-1), var(--gate-2), var(--gate-3), var(--gate-4)); border-radius: 2px; width: 0%; transition: width 0.8s ease; }
+        .pipeline-stages { display: flex; justify-content: space-between; position: relative; z-index: 1; }
+        .stage { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.2s; }
+        .stage:hover { transform: translateY(-4px); }
+        .stage-node { width: 4rem; height: 4rem; border-radius: 50%; background: white; border: 3px solid var(--border-light); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 0.75rem; transition: all 0.3s ease; }
+        .stage-label { font-size: 0.8rem; font-weight: 600; color: var(--text-primary); text-align: center; }
+        .stage-sublabel { font-size: 0.7rem; color: var(--text-muted); }
+
+        .stage.gate-0 .stage-node { border-color: var(--gate-0); }
+        .stage.gate-0.active .stage-node, .stage.gate-0.completed .stage-node { background: var(--gate-0); color: white; }
+        .stage.gate-0.active .stage-node { box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.2); transform: scale(1.1); }
+        .stage.gate-1 .stage-node { border-color: var(--gate-1); }
+        .stage.gate-1.active .stage-node, .stage.gate-1.completed .stage-node { background: var(--gate-1); color: white; }
+        .stage.gate-1.active .stage-node { box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.2); transform: scale(1.1); }
+        .stage.gate-2 .stage-node { border-color: var(--gate-2); }
+        .stage.gate-2.active .stage-node, .stage.gate-2.completed .stage-node { background: var(--gate-2); color: white; }
+        .stage.gate-2.active .stage-node { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2); transform: scale(1.1); }
+        .stage.gate-3 .stage-node { border-color: var(--gate-3); }
+        .stage.gate-3.active .stage-node, .stage.gate-3.completed .stage-node { background: var(--gate-3); color: white; }
+        .stage.gate-3.active .stage-node { box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.2); transform: scale(1.1); }
+        .stage.gate-4 .stage-node { border-color: var(--gate-4); }
+        .stage.gate-4.active .stage-node, .stage.gate-4.completed .stage-node { background: var(--gate-4); color: white; }
+        .stage.gate-4.active .stage-node { box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.2); transform: scale(1.1); }
+
+        /* Controls */
+        .controls { display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem; }
+        .control-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+        .control-btn.primary { background: var(--accent-primary); color: white; }
+        .control-btn.primary:hover { background: #1d4ed8; }
+        .control-btn.secondary { background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border-light); }
+        .control-btn.secondary:hover { border-color: var(--accent-primary); }
+
+        /* Gate Detail */
+        .gate-detail { background: var(--bg-white); border: 1px solid var(--border-light); border-radius: 1rem; margin-top: 2rem; overflow: hidden; display: none; }
+        .gate-detail.visible { display: block; animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .gate-detail-header { padding: 1.5rem; color: white; display: flex; justify-content: space-between; align-items: center; }
+        .gate-detail.gate-0 .gate-detail-header { background: var(--gate-0); }
+        .gate-detail.gate-1 .gate-detail-header { background: var(--gate-1); }
+        .gate-detail.gate-2 .gate-detail-header { background: var(--gate-2); }
+        .gate-detail.gate-3 .gate-detail-header { background: var(--gate-3); }
+        .gate-detail.gate-4 .gate-detail-header { background: var(--gate-4); }
+        .gate-detail-title h3 { font-size: 1.25rem; font-weight: 700; }
+        .gate-detail-title span { font-size: 0.9rem; opacity: 0.9; }
+        .close-detail { background: rgba(255,255,255,0.2); border: none; color: white; width: 2rem; height: 2rem; border-radius: 50%; cursor: pointer; font-size: 1.25rem; }
+        .close-detail:hover { background: rgba(255,255,255,0.3); }
+        .gate-detail-body { padding: 2rem; }
+        .detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+        .detail-section h4 { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 1rem; }
+        .detail-section ul { list-style: none; }
+        .detail-section li { padding: 0.5rem 0; padding-left: 1.5rem; position: relative; font-size: 0.9rem; color: var(--text-secondary); border-bottom: 1px solid var(--border-light); }
+        .detail-section li:last-child { border-bottom: none; }
+        .detail-section li::before { content: ""; position: absolute; left: 0; top: 0.875rem; width: 6px; height: 6px; border-radius: 50%; background: var(--accent-primary); }
+        .gate-detail.gate-0 .detail-section li::before { background: var(--gate-0); }
+        .gate-detail.gate-1 .detail-section li::before { background: var(--gate-1); }
+        .gate-detail.gate-2 .detail-section li::before { background: var(--gate-2); }
+        .gate-detail.gate-3 .detail-section li::before { background: var(--gate-3); }
+        .gate-detail.gate-4 .detail-section li::before { background: var(--gate-4); }
+
+        .project-context { background: var(--bg-primary); border-radius: 0.75rem; padding: 1rem 1.25rem; margin-top: 1.5rem; border-left: 4px solid var(--accent-primary); }
+        .gate-detail.gate-0 .project-context { border-color: var(--gate-0); }
+        .gate-detail.gate-1 .project-context { border-color: var(--gate-1); }
+        .gate-detail.gate-2 .project-context { border-color: var(--gate-2); }
+        .gate-detail.gate-3 .project-context { border-color: var(--gate-3); }
+        .gate-detail.gate-4 .project-context { border-color: var(--gate-4); }
+        .project-context h5 { font-size: 0.8rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .project-context p { font-size: 0.85rem; color: var(--text-secondary); font-style: italic; }
+
+        .roles-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-light); }
+        .roles-row h4 { width: 100%; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .role-badge { padding: 0.5rem 0.875rem; background: var(--bg-primary); border-radius: 2rem; font-size: 0.8rem; color: var(--text-secondary); }
+
+        /* Footer */
+        footer { padding: 2rem 0; text-align: center; border-top: 1px solid var(--border-light); margin-top: 3rem; }
+        footer p { font-size: 0.85rem; color: var(--text-muted); }
+        footer a { color: var(--accent-primary); text-decoration: none; }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .before-after { grid-template-columns: 1fr; }
+            .project-card { flex-direction: column; text-align: center; }
+            .stage-node { width: 3rem; height: 3rem; font-size: 1.25rem; }
+            .stage-sublabel { display: none; }
+            .detail-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="container hero-content">
+            <nav class="hero-nav">
+                <a href="index.html" class="hero-logo">SK</a>
+                <a href="alnylam-pmo.html" class="back-link">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    Back to Case Study
+                </a>
+            </nav>
+            <span class="hero-badge">Interactive Framework</span>
+            <h1>IT PMO Stage-Gate Framework</h1>
+            <p class="hero-subtitle">A standardized governance framework designed for Alnylam Pharmaceuticals to manage IT projects from idea to deployment with clear checkpoints and accountability.</p>
+            <div class="before-after">
+                <div class="ba-card before">
+                    <h3>✗ Before: The Problem</h3>
+                    <ul>
+                        <li>No standardized project intake process</li>
+                        <li>Unclear decision-making authority</li>
+                        <li>Projects starting without proper approval</li>
+                        <li>Inconsistent prioritization across IT</li>
+                    </ul>
+                </div>
+                <div class="ba-card after">
+                    <h3>✓ After: The Solution</h3>
+                    <ul>
+                        <li>Standardized intake form and approval flow</li>
+                        <li>Clear RACI for every decision point</li>
+                        <li>5 quality gates with exit criteria</li>
+                        <li>Governance aligned with business priorities</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="simulator">
+        <div class="container">
+            <div class="simulator-header">
+                <h2>See It In Action</h2>
+                <p>Watch how a real IT project flows through the stage-gate process</p>
+            </div>
+            <div class="project-card">
+                <div class="project-icon">🗄️</div>
+                <div class="project-info">
+                    <h3>Data Warehouse Upgrade</h3>
+                    <p>Migrate legacy on-premise data warehouse to cloud-based solution with improved analytics capabilities for clinical trial data.</p>
+                    <div class="project-meta">
+                        <span class="project-tag">💰 $1.2M Budget</span>
+                        <span class="project-tag">📅 18 Months</span>
+                        <span class="project-tag">👥 12-Person Team</span>
+                        <span class="project-tag">🛡️ GxP Validated</span>
+                    </div>
+                </div>
+            </div>
+            <div class="pipeline">
+                <div class="pipeline-track"><div class="pipeline-progress" id="pipelineProgress"></div></div>
+                <div class="pipeline-stages">
+                    <div class="stage gate-0 active" onclick="showGateDetail(0)">
+                        <div class="stage-node">🚀</div>
+                        <span class="stage-label">Gate 0</span>
+                        <span class="stage-sublabel">Initiate</span>
+                    </div>
+                    <div class="stage gate-1" onclick="showGateDetail(1)">
+                        <div class="stage-node">📋</div>
+                        <span class="stage-label">Gate 1</span>
+                        <span class="stage-sublabel">Plan</span>
+                    </div>
+                    <div class="stage gate-2" onclick="showGateDetail(2)">
+                        <div class="stage-node">🔨</div>
+                        <span class="stage-label">Gate 2</span>
+                        <span class="stage-sublabel">Build</span>
+                    </div>
+                    <div class="stage gate-3" onclick="showGateDetail(3)">
+                        <div class="stage-node">🧪</div>
+                        <span class="stage-label">Gate 3</span>
+                        <span class="stage-sublabel">Test</span>
+                    </div>
+                    <div class="stage gate-4" onclick="showGateDetail(4)">
+                        <div class="stage-node">✨</div>
+                        <span class="stage-label">Gate 4</span>
+                        <span class="stage-sublabel">Deploy</span>
+                    </div>
+                </div>
+            </div>
+            <div class="controls">
+                <button class="control-btn secondary" onclick="resetSimulation()">🔄 Reset</button>
+                <button class="control-btn primary" onclick="playSimulation()" id="playBtn">▶️ Play Full Journey</button>
+                <button class="control-btn secondary" onclick="nextGate()">Next Gate →</button>
+            </div>
+
+            <!-- Gate 0 -->
+            <div class="gate-detail gate-0 visible" id="gateDetail0">
+                <div class="gate-detail-header">
+                    <div class="gate-detail-title"><h3>Gate 0: Initiate</h3><span>Validate & Initiate Project</span></div>
+                    <button class="close-detail" onclick="closeDetail()">×</button>
+                </div>
+                <div class="gate-detail-body">
+                    <div class="detail-grid">
+                        <div class="detail-section"><h4>📥 Entry Criteria</h4><ul><li>IT Project Intake Request submitted</li><li>Business justification documented</li><li>Executive sponsor identified</li><li>Initial budget estimate provided</li></ul></div>
+                        <div class="detail-section"><h4>⚡ Key Activities</h4><ul><li>Validate strategic alignment</li><li>Confirm funding source</li><li>Assign project manager</li><li>Draft project charter</li></ul></div>
+                        <div class="detail-section"><h4>📤 Exit Criteria</h4><ul><li>Charter approved by sponsor</li><li>Project team identified</li><li>Budget formally allocated</li><li>Kickoff meeting scheduled</li></ul></div>
+                        <div class="detail-section"><h4>🏛️ Governance</h4><ul><li>IT Directors review & approve</li><li>Finance validates budget</li><li>PMO assigns resources</li><li>Steering Committee notified</li></ul></div>
+                    </div>
+                    <div class="project-context"><h5>💡 Data Warehouse Upgrade — At This Gate</h5><p>"The Clinical Data team submitted an intake request to modernize our 10-year-old data warehouse. CFO approved the $1.2M budget, and IT Directors validated alignment with the Digital Transformation initiative. Sarah Chen assigned as PM."</p></div>
+                    <div class="roles-row"><h4>Key Roles</h4><span class="role-badge">Project Sponsor</span><span class="role-badge">IT Directors</span><span class="role-badge">Finance</span><span class="role-badge">IT PMO</span></div>
+                </div>
+            </div>
+
+            <!-- Gate 1 -->
+            <div class="gate-detail gate-1" id="gateDetail1">
+                <div class="gate-detail-header">
+                    <div class="gate-detail-title"><h3>Gate 1: Plan</h3><span>Plan & Specify Requirements</span></div>
+                    <button class="close-detail" onclick="closeDetail()">×</button>
+                </div>
+                <div class="gate-detail-body">
+                    <div class="detail-grid">
+                        <div class="detail-section"><h4>📥 Entry Criteria</h4><ul><li>Gate 0 approval obtained</li><li>Project charter signed</li><li>Core team assembled</li><li>Kickoff meeting completed</li></ul></div>
+                        <div class="detail-section"><h4>⚡ Key Activities</h4><ul><li>Gather detailed requirements</li><li>Enterprise Architecture review</li><li>Develop project plan</li><li>Identify and assess risks</li></ul></div>
+                        <div class="detail-section"><h4>📤 Exit Criteria</h4><ul><li>Requirements document approved</li><li>Architecture design signed off</li><li>Detailed project plan baselined</li><li>Risk register established</li></ul></div>
+                        <div class="detail-section"><h4>🏛️ Governance</h4><ul><li>Enterprise Architecture approval</li><li>Steering Committee checkpoint</li><li>Security review initiated</li><li>Vendor selection (if needed)</li></ul></div>
+                    </div>
+                    <div class="project-context"><h5>💡 Data Warehouse Upgrade — At This Gate</h5><p>"Requirements gathered from 6 business units. Enterprise Architecture approved AWS Redshift as the target platform. GxP validation requirements documented. 18-month project plan with 4 major releases baselined."</p></div>
+                    <div class="roles-row"><h4>Key Roles</h4><span class="role-badge">Project Manager</span><span class="role-badge">Enterprise Architecture</span><span class="role-badge">Business Analysts</span><span class="role-badge">Security Team</span></div>
+                </div>
+            </div>
+
+            <!-- Gate 2 -->
+            <div class="gate-detail gate-2" id="gateDetail2">
+                <div class="gate-detail-header">
+                    <div class="gate-detail-title"><h3>Gate 2: Build</h3><span>Build & Configure Solution</span></div>
+                    <button class="close-detail" onclick="closeDetail()">×</button>
+                </div>
+                <div class="gate-detail-body">
+                    <div class="detail-grid">
+                        <div class="detail-section"><h4>📥 Entry Criteria</h4><ul><li>Gate 1 approval obtained</li><li>Development environment ready</li><li>Technical design approved</li><li>Development team onboarded</li></ul></div>
+                        <div class="detail-section"><h4>⚡ Key Activities</h4><ul><li>Execute development sprints</li><li>Build ETL pipelines</li><li>Configure cloud infrastructure</li><li>Conduct unit testing</li></ul></div>
+                        <div class="detail-section"><h4>📤 Exit Criteria</h4><ul><li>All features developed</li><li>Unit tests passing (>90%)</li><li>Code review completed</li><li>Ready for QA testing</li></ul></div>
+                        <div class="detail-section"><h4>🏛️ Governance</h4><ul><li>Bi-weekly sprint reviews</li><li>Change control board</li><li>Technical debt review</li><li>Security code scan</li></ul></div>
+                    </div>
+                    <div class="project-context"><h5>💡 Data Warehouse Upgrade — At This Gate</h5><p>"8 two-week sprints completed. 47 ETL pipelines migrated and tested. AWS Redshift cluster configured with automated scaling. Data validation framework built to ensure clinical trial data integrity."</p></div>
+                    <div class="roles-row"><h4>Key Roles</h4><span class="role-badge">Development Team</span><span class="role-badge">Technical Lead</span><span class="role-badge">DevOps</span><span class="role-badge">Scrum Master</span></div>
+                </div>
+            </div>
+
+            <!-- Gate 3 -->
+            <div class="gate-detail gate-3" id="gateDetail3">
+                <div class="gate-detail-header">
+                    <div class="gate-detail-title"><h3>Gate 3: Test</h3><span>Test & Verify Solution</span></div>
+                    <button class="close-detail" onclick="closeDetail()">×</button>
+                </div>
+                <div class="gate-detail-body">
+                    <div class="detail-grid">
+                        <div class="detail-section"><h4>📥 Entry Criteria</h4><ul><li>Gate 2 approval obtained</li><li>Test environment provisioned</li><li>Test plan approved</li><li>Test data prepared</li></ul></div>
+                        <div class="detail-section"><h4>⚡ Key Activities</h4><ul><li>Execute system testing</li><li>Conduct UAT with business</li><li>Performance load testing</li><li>GxP validation testing</li></ul></div>
+                        <div class="detail-section"><h4>📤 Exit Criteria</h4><ul><li>All test cases passed</li><li>UAT sign-off obtained</li><li>Performance benchmarks met</li><li>Validation documentation complete</li></ul></div>
+                        <div class="detail-section"><h4>🏛️ Governance</h4><ul><li>QA lead sign-off</li><li>Business UAT approval</li><li>GxP validation approval</li><li>Go/No-Go decision meeting</li></ul></div>
+                    </div>
+                    <div class="project-context"><h5>💡 Data Warehouse Upgrade — At This Gate</h5><p>"142 test cases executed with 98% pass rate. Clinical Data team completed UAT over 3 weeks. Performance testing showed 40% faster query times than legacy system. GxP IQ/OQ/PQ protocols executed."</p></div>
+                    <div class="roles-row"><h4>Key Roles</h4><span class="role-badge">QA Team</span><span class="role-badge">Business Users</span><span class="role-badge">Validation Team</span><span class="role-badge">Project Sponsor</span></div>
+                </div>
+            </div>
+
+            <!-- Gate 4 -->
+            <div class="gate-detail gate-4" id="gateDetail4">
+                <div class="gate-detail-header">
+                    <div class="gate-detail-title"><h3>Gate 4: Deploy</h3><span>Deploy & Transition to Operations</span></div>
+                    <button class="close-detail" onclick="closeDetail()">×</button>
+                </div>
+                <div class="gate-detail-body">
+                    <div class="detail-grid">
+                        <div class="detail-section"><h4>📥 Entry Criteria</h4><ul><li>Gate 3 approval obtained</li><li>Go-live approval from Steering Committee</li><li>Deployment plan approved</li><li>Support team trained</li></ul></div>
+                        <div class="detail-section"><h4>⚡ Key Activities</h4><ul><li>Execute production deployment</li><li>Conduct user training</li><li>Monitor system stability</li><li>Handover to operations</li></ul></div>
+                        <div class="detail-section"><h4>📤 Exit Criteria</h4><ul><li>System live and stable</li><li>Users trained and productive</li><li>Support handover complete</li><li>Project formally closed</li></ul></div>
+                        <div class="detail-section"><h4>🏛️ Governance</h4><ul><li>Go-live approval from sponsor</li><li>Operations acceptance sign-off</li><li>Post-implementation review</li><li>Lessons learned documented</li></ul></div>
+                    </div>
+                    <div class="project-context"><h5>💡 Data Warehouse Upgrade — At This Gate</h5><p>"Phased go-live completed over 2 weekends. 450+ users trained across 6 business units. Legacy system decommissioned after 30-day parallel run. Project closed with 92% stakeholder satisfaction score."</p></div>
+                    <div class="roles-row"><h4>Key Roles</h4><span class="role-badge">Project Manager</span><span class="role-badge">Operations Team</span><span class="role-badge">Project Sponsor</span><span class="role-badge">IT PMO</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer><div class="container"><p>Part of <a href="alnylam-pmo.html">Alnylam IT PMO Framework</a> • Built by <a href="index.html">Sankalp Kaushal</a></p></div></footer>
+
+    <script>
+        let currentGate = 0, isPlaying = false, playInterval;
+
+        function showGateDetail(gateNum) {
+            document.querySelectorAll('.gate-detail').forEach(el => el.classList.remove('visible'));
+            document.getElementById('gateDetail' + gateNum).classList.add('visible');
+            updateActiveStage(gateNum);
+            currentGate = gateNum;
+        }
+
+        function closeDetail() {
+            document.querySelectorAll('.gate-detail').forEach(el => el.classList.remove('visible'));
+        }
+
+        function updateActiveStage(gateNum) {
+            document.querySelectorAll('.stage').forEach((stage, index) => {
+                stage.classList.remove('active', 'completed');
+                if (index < gateNum) stage.classList.add('completed');
+                else if (index === gateNum) stage.classList.add('active');
+            });
+            document.getElementById('pipelineProgress').style.width = (gateNum / 4) * 100 + '%';
+        }
+
+        function nextGate() { if (currentGate < 4) showGateDetail(++currentGate); }
+        function resetSimulation() { stopPlaying(); currentGate = 0; showGateDetail(0); }
+
+        function playSimulation() {
+            if (isPlaying) { stopPlaying(); return; }
+            isPlaying = true;
+            document.getElementById('playBtn').textContent = '⏸️ Pause';
+            currentGate = 0; showGateDetail(0);
+            playInterval = setInterval(() => {
+                if (currentGate < 4) showGateDetail(++currentGate);
+                else stopPlaying();
+            }, 3000);
+        }
+
+        function stopPlaying() {
+            isPlaying = false;
+            clearInterval(playInterval);
+            document.getElementById('playBtn').textContent = '▶️ Play Full Journey';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => showGateDetail(0));
+    </script>
+</body>
+</html>
