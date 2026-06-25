@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Adoption Gap: An Implementation Framework | Sankalp's Portfolio</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
+    <title>The Adoption Gap | Sankalp Kaushal</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:ital,wght@0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-primary: #fafafa;
             --bg-white: #ffffff;
             --bg-subtle: #f5f5f5;
+            --bg-ink: #111111;
             --accent-primary: #2563eb;
             --accent-secondary: #3b82f6;
             --accent-light: #eff6ff;
@@ -29,532 +30,168 @@
             --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
             --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
             --shadow-lg: 0 12px 32px rgba(0,0,0,0.1);
+            --shadow-xl: 0 24px 60px rgba(0,0,0,0.16);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body {
             font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
+            background: var(--bg-primary); color: var(--text-primary);
+            line-height: 1.6; overflow-x: hidden;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
+        .progress-bar {
+            position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-green));
+            z-index: 200; transition: width 0.1s linear;
         }
 
-        /* Navigation */
         nav {
-            padding: 1.5rem 0;
-            background: var(--bg-white);
-            border-bottom: 1px solid var(--border-subtle);
+            padding: 1.25rem 0; background: rgba(250,250,250,0.85);
+            backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-subtle);
+            position: sticky; top: 0; z-index: 100;
         }
-
         .nav-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            max-width: 1100px; margin: 0 auto; padding: 0 1.5rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .nav-logo { font-family: 'Fraunces', serif; font-size: 1.25rem; font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .nav-back { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s ease; }
+        .nav-back:hover { color: var(--accent-primary); }
+        .nav-back svg { width: 1rem; height: 1rem; }
+
+        .wrap { max-width: 820px; margin: 0 auto; padding: 0 1.5rem; }
+        .wrap-wide { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+
+        .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+        .reveal.in { opacity: 1; transform: none; }
+        .reveal.d1 { transition-delay: 0.08s; }
+        .reveal.d2 { transition-delay: 0.16s; }
+        .reveal.d3 { transition-delay: 0.24s; }
+        .reveal.d4 { transition-delay: 0.32s; }
+        @media (prefers-reduced-motion: reduce) {
+            .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+            html { scroll-behavior: auto; }
         }
 
-        .nav-logo {
-            font-family: 'Fraunces', serif;
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            text-decoration: none;
+        .opener { min-height: 88vh; display: flex; flex-direction: column; justify-content: center; padding: 4rem 0; }
+        .eyebrow { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent-primary); margin-bottom: 1.5rem; }
+        .opener h1 { font-family: 'Fraunces', serif; font-size: clamp(2.6rem, 7vw, 4.5rem); font-weight: 700; line-height: 1.05; letter-spacing: -0.01em; margin-bottom: 2rem; }
+        .opener h1 .hl { color: var(--accent-primary); font-style: italic; }
+        .lede-line { font-size: clamp(1.15rem, 2.4vw, 1.5rem); color: var(--text-secondary); max-width: 640px; margin-bottom: 1rem; line-height: 1.45; }
+        .lede-line b { color: var(--text-primary); font-weight: 600; }
+        .scroll-cue { margin-top: 3rem; display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+        .scroll-cue svg { width: 1.1rem; height: 1.1rem; animation: bob 1.8s ease-in-out infinite; }
+        @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+        @media (prefers-reduced-motion: reduce) { .scroll-cue svg { animation: none; } }
+
+        .statement { padding: 6rem 0; }
+        .statement .kicker { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent-primary); margin-bottom: 1rem; }
+        .statement h2 { font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; margin-bottom: 1.25rem; }
+        .statement p { font-size: 1.1rem; color: var(--text-secondary); max-width: 600px; }
+        .statement p + p { margin-top: 1rem; }
+        .statement strong { color: var(--text-primary); font-weight: 600; }
+        .pull { font-family: 'Fraunces', serif; font-style: italic; font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 600; line-height: 1.3; color: var(--text-primary); border-left: 4px solid var(--accent-primary); padding-left: 1.5rem; max-width: 700px; }
+
+        .lab { background: var(--bg-ink); color: white; padding: 5rem 0; }
+        .lab .kicker { color: #8ab4ff; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 1rem; }
+        .lab h2 { color: white; font-family: 'Fraunces', serif; font-size: clamp(1.7rem, 4vw, 2.5rem); font-weight: 700; line-height: 1.15; margin-bottom: 0.75rem; }
+        .lab .sub { color: #b4b4b4; font-size: 1.05rem; max-width: 560px; margin-bottom: 2.5rem; }
+        .curve-stage { background: #1a1a1a; border: 1px solid #2e2e2e; border-radius: 1.25rem; padding: 2rem 1.5rem 1.75rem; }
+        .curve-stage svg { width: 100%; height: auto; display: block; }
+        .verdict { text-align: center; margin: 1.25rem auto 0; font-family: 'Fraunces', serif; font-style: italic; font-size: 1.35rem; font-weight: 600; min-height: 1.6em; transition: color 0.3s ease; }
+        .slider-row { margin-top: 1.75rem; display: flex; flex-direction: column; gap: 0.75rem; }
+        .slider-label { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; color: #9a9a9a; text-transform: uppercase; letter-spacing: 0.06em; }
+        .slider-label .now { color: white; text-transform: none; letter-spacing: 0; font-weight: 600; }
+        input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 99px; background: linear-gradient(90deg, var(--accent-red), var(--accent-amber), var(--accent-green)); outline: none; cursor: pointer; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 28px; height: 28px; border-radius: 50%; background: white; border: 3px solid var(--accent-primary); box-shadow: 0 2px 8px rgba(0,0,0,0.4); cursor: grab; }
+        input[type=range]::-webkit-slider-thumb:active { cursor: grabbing; transform: scale(1.1); }
+        input[type=range]::-moz-range-thumb { width: 28px; height: 28px; border-radius: 50%; background: white; border: 3px solid var(--accent-primary); box-shadow: 0 2px 8px rgba(0,0,0,0.4); cursor: grab; }
+        .lab-hint { margin-top: 1rem; font-size: 0.85rem; color: #777; text-align: center; }
+
+        .personas { padding: 6rem 0; }
+        .persona-row { display: grid; grid-template-columns: 2.5rem 1fr; gap: 1.25rem; padding: 1.5rem 0; border-bottom: 1px solid var(--border-light); align-items: start; }
+        .persona-row:first-of-type { border-top: 1px solid var(--border-light); }
+        .persona-num { font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 700; color: var(--accent-primary); padding-top: 0.15rem; }
+        .persona-row.key { background: linear-gradient(90deg, var(--accent-light), transparent); margin: 0 -1rem; padding: 1.5rem 1rem; border-radius: 0.5rem; }
+        .persona-name { font-size: 1.15rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.3rem; }
+        .linchpin { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent-primary); background: var(--bg-white); border: 1px solid #dbeafe; padding: 0.15rem 0.5rem; border-radius: 0.25rem; }
+        .persona-detail { font-size: 0.95rem; color: var(--text-secondary); }
+        .persona-detail .fear { color: var(--accent-red); font-weight: 500; }
+        .persona-detail .move { color: var(--accent-green); font-weight: 500; }
+
+        .timeline-sec { padding: 6rem 0; background: var(--bg-white); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); }
+        .track { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: 2.5rem; position: relative; }
+        .track::before { content: ''; position: absolute; top: 2.1rem; left: 8%; right: 8%; height: 2px; background: linear-gradient(90deg, var(--accent-primary), var(--accent-purple), var(--accent-green)); z-index: 0; }
+        .stop { position: relative; z-index: 1; text-align: center; }
+        .stop-dot { width: 1.1rem; height: 1.1rem; border-radius: 50%; margin: 0 auto 1.25rem; border: 3px solid var(--bg-white); box-shadow: 0 0 0 2px currentColor; background: currentColor; }
+        .stop.s1 { color: var(--accent-primary); }
+        .stop.s2 { color: var(--accent-purple); }
+        .stop.s3 { color: var(--accent-green); }
+        .stop-card { background: var(--bg-subtle); border: 1px solid var(--border-light); border-radius: 0.85rem; padding: 1.5rem 1.25rem; text-align: left; }
+        .stop-days { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.4rem; }
+        .stop-card h3 { font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 600; margin-bottom: 0.6rem; color: var(--text-primary); }
+        .stop-card p { font-size: 0.9rem; color: var(--text-secondary); }
+        .stop-win { margin-top: 0.85rem; padding-top: 0.75rem; border-top: 1px solid var(--border-light); font-size: 0.82rem; color: var(--text-muted); }
+        .stop-win b { color: var(--text-primary); }
+
+        .health-sec { padding: 6rem 0; }
+        .health-sec .lead { font-size: 1.1rem; color: var(--text-secondary); max-width: 620px; margin-bottom: 0.75rem; }
+        .health-sec .lead b { color: var(--text-primary); }
+        .signal-line { font-size: 0.9rem; color: var(--text-muted); max-width: 640px; margin-bottom: 2.5rem; }
+        .signal-line b { color: var(--text-primary); }
+        .tier-stack { display: grid; gap: 1rem; }
+        .tier-card { display: grid; grid-template-columns: auto 1fr auto; gap: 1.25rem; align-items: center; background: var(--bg-white); border: 1px solid var(--border-light); border-left-width: 5px; border-radius: 0.85rem; padding: 1.5rem; }
+        .tier-card.g { border-left-color: var(--accent-green); }
+        .tier-card.a { border-left-color: var(--accent-amber); }
+        .tier-card.r { border-left-color: var(--accent-red); }
+        .tier-icon { font-size: 1.6rem; }
+        .tier-body h3 { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.2rem; }
+        .tier-body p { font-size: 0.9rem; color: var(--text-secondary); }
+        .tier-play { font-size: 0.85rem; color: var(--text-secondary); max-width: 230px; padding-left: 1.25rem; border-left: 1px solid var(--border-light); }
+        .tier-play b { color: var(--text-primary); }
+        @media (max-width: 720px) {
+            .tier-card { grid-template-columns: auto 1fr; }
+            .tier-play { grid-column: 1 / -1; border-left: none; padding-left: 0; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle); max-width: none; }
         }
 
-        .nav-back {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.2s ease;
+        .origin-sec { padding: 5rem 0; background: var(--accent-light); border-top: 1px solid #dbeafe; border-bottom: 1px solid #dbeafe; }
+        .origin-sec .kicker { color: var(--accent-primary); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 1rem; }
+        .origin-sec h2 { font-family: 'Fraunces', serif; font-size: clamp(1.6rem,3.5vw,2.3rem); font-weight: 700; margin-bottom: 1.25rem; line-height: 1.15; }
+        .origin-sec p { font-size: 1.05rem; color: var(--text-secondary); max-width: 640px; margin-bottom: 1rem; }
+        .origin-sec strong { color: var(--text-primary); }
+        .origin-link { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.95rem; font-weight: 600; color: var(--accent-primary); text-decoration: none; margin-top: 0.5rem; }
+        .origin-link svg { width: 1rem; height: 1rem; transition: transform 0.2s ease; }
+        .origin-link:hover svg { transform: translateX(3px); }
+
+        .honesty { padding: 4rem 0; }
+        .honesty p { font-family: 'Fraunces', serif; font-style: italic; font-size: 1.05rem; color: var(--text-muted); max-width: 640px; line-height: 1.6; }
+
+        .end { padding: 5rem 0 6rem; text-align: center; border-top: 1px solid var(--border-subtle); }
+        .end-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+        .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 1.4rem; font-size: 0.92rem; font-weight: 600; text-decoration: none; border-radius: 0.5rem; transition: all 0.2s ease; }
+        .btn-primary { background: var(--accent-primary); color: white; }
+        .btn-primary:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .btn-secondary { background: var(--bg-subtle); color: var(--text-primary); border: 1px solid var(--border-light); }
+        .btn-secondary:hover { border-color: var(--accent-primary); }
+        .btn svg { width: 1rem; height: 1rem; }
+
+        .sec-kicker { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent-primary); margin-bottom: 1rem; }
+        .sec-h2 { font-family: 'Fraunces', serif; font-size: clamp(1.7rem,4vw,2.5rem); font-weight: 700; line-height: 1.15; }
+
+        @media (max-width: 720px) {
+            .track { grid-template-columns: 1fr; gap: 2rem; }
+            .track::before { display: none; }
+            .statement, .personas, .timeline-sec, .health-sec { padding: 4rem 0; }
         }
-
-        .nav-back:hover {
-            color: var(--accent-primary);
-        }
-
-        .nav-back svg {
-            width: 1rem;
-            height: 1rem;
-        }
-
-        /* Hero Section */
-        .hero {
-            padding: 4rem 0 3rem;
-            background: var(--bg-white);
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .hero-label {
-            display: inline-block;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--accent-primary);
-            margin-bottom: 1rem;
-        }
-
-        .hero h1 {
-            font-family: 'Fraunces', serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            line-height: 1.15;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
-
-        .hero-subtitle {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-            max-width: 680px;
-            margin-bottom: 2rem;
-        }
-
-        .hero-thesis {
-            font-family: 'Fraunces', serif;
-            font-size: 1.25rem;
-            font-weight: 600;
-            line-height: 1.4;
-            color: var(--text-primary);
-            border-left: 3px solid var(--accent-primary);
-            padding-left: 1.25rem;
-            max-width: 680px;
-        }
-
-        /* Hero Curve Visual */
-        .curve-section {
-            padding: 3rem 0;
-            background: var(--bg-subtle);
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .curve-card {
-            background: var(--bg-white);
-            border: 1px solid var(--border-light);
-            border-radius: 1rem;
-            padding: 2rem 1.5rem 1.5rem;
-            box-shadow: var(--shadow-md);
-        }
-
-        .curve-card svg {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .curve-caption {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border-subtle);
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            text-align: center;
-        }
-
-        .curve-caption strong { color: var(--text-primary); }
-
-        /* Generic sections */
-        section { padding: 3rem 0; }
-
-        .section-label {
-            display: inline-block;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--accent-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .section-title {
-            font-family: 'Fraunces', serif;
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            color: var(--text-primary);
-        }
-
-        .prose {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            max-width: 700px;
-        }
-
-        .prose p { margin-bottom: 1rem; }
-        .prose p:last-child { margin-bottom: 0; }
-        .prose strong { color: var(--text-primary); font-weight: 600; }
-
-        /* Origin / real-experience callout */
-        .origin-section {
-            background: var(--bg-white);
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .origin-card {
-            background: var(--accent-light);
-            border: 1px solid #dbeafe;
-            border-left: 3px solid var(--accent-primary);
-            border-radius: 0.75rem;
-            padding: 1.75rem;
-            max-width: 760px;
-        }
-
-        .origin-card .eyebrow {
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--accent-primary);
-            margin-bottom: 0.75rem;
-        }
-
-        .origin-card p {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-        }
-
-        .origin-card p:last-child { margin-bottom: 0; }
-        .origin-card strong { color: var(--text-primary); }
-
-        .origin-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--accent-primary);
-            text-decoration: none;
-            margin-top: 0.25rem;
-        }
-
-        .origin-link svg { width: 1rem; height: 1rem; }
-        .origin-link:hover { text-decoration: underline; }
-
-        /* Principles */
-        .principles-section { background: var(--bg-subtle); border-bottom: 1px solid var(--border-subtle); }
-
-        .principles-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-        }
-
-        .principle-card {
-            background: var(--bg-white);
-            border: 1px solid var(--border-light);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-        }
-
-        .principle-card .num {
-            font-family: 'Fraunces', serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--accent-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .principle-card h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-        }
-
-        .principle-card p {
-            font-size: 0.875rem;
-            color: var(--text-muted);
-        }
-
-        /* Personas table */
-        .persona-table-wrap { max-width: 100%; overflow-x: auto; }
-
-        table.personas {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-            background: var(--bg-white);
-            border: 1px solid var(--border-light);
-            border-radius: 0.75rem;
-            overflow: hidden;
-        }
-
-        table.personas th {
-            text-align: left;
-            padding: 0.875rem 1rem;
-            background: var(--bg-subtle);
-            font-weight: 600;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            color: var(--text-muted);
-            border-bottom: 1px solid var(--border-light);
-        }
-
-        table.personas td {
-            padding: 0.875rem 1rem;
-            border-bottom: 1px solid var(--border-subtle);
-            color: var(--text-secondary);
-            vertical-align: top;
-        }
-
-        table.personas tr:last-child td { border-bottom: none; }
-        table.personas td strong { color: var(--text-primary); font-weight: 600; }
-
-        .key-row { background: var(--accent-light); }
-        .key-tag {
-            display: inline-block;
-            font-size: 0.65rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--accent-primary);
-            background: var(--bg-white);
-            border: 1px solid #dbeafe;
-            padding: 0.1rem 0.4rem;
-            border-radius: 0.25rem;
-            margin-left: 0.4rem;
-            vertical-align: middle;
-        }
-
-        /* Timeline 30-60-90 */
-        .timeline-section { background: var(--bg-white); border-bottom: 1px solid var(--border-subtle); border-top: 1px solid var(--border-subtle); }
-
-        .timeline {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-        }
-
-        .phase-card {
-            background: var(--bg-subtle);
-            border: 1px solid var(--border-light);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-        }
-
-        .phase-card.p1 { border-top: 3px solid var(--accent-primary); }
-        .phase-card.p2 { border-top: 3px solid var(--accent-purple); }
-        .phase-card.p3 { border-top: 3px solid var(--accent-green); }
-
-        .phase-days {
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--text-muted);
-            margin-bottom: 0.4rem;
-        }
-
-        .phase-card h3 {
-            font-family: 'Fraunces', serif;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: var(--text-primary);
-        }
-
-        .phase-card p {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.75rem;
-        }
-
-        .phase-win {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            padding-top: 0.75rem;
-            border-top: 1px solid var(--border-light);
-        }
-
-        .phase-win strong { color: var(--text-primary); }
-
-        /* Health score tiers */
-        .health-section { background: var(--bg-subtle); border-bottom: 1px solid var(--border-subtle); }
-
-        .tiers {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .tier {
-            background: var(--bg-white);
-            border: 1px solid var(--border-light);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-        }
-
-        .tier-dot {
-            width: 0.75rem;
-            height: 0.75rem;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 0.5rem;
-            vertical-align: middle;
-        }
-
-        .tier.green .tier-dot { background: var(--accent-green); }
-        .tier.amber .tier-dot { background: var(--accent-amber); }
-        .tier.red .tier-dot { background: var(--accent-red); }
-
-        .tier h3 {
-            display: inline;
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .tier .state {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin: 0.6rem 0 0.75rem;
-        }
-
-        .tier .play {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            padding-top: 0.75rem;
-            border-top: 1px solid var(--border-subtle);
-        }
-
-        .tier .play strong { color: var(--text-primary); }
-
-        .signals-note {
-            margin-top: 1.5rem;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            max-width: 700px;
-        }
-
-        .signals-note strong { color: var(--text-primary); }
-
-        /* Read full playbook CTA */
-        .playbook-section { background: var(--bg-white); border-bottom: 1px solid var(--border-subtle); }
-
-        .playbook-card {
-            background: var(--text-primary);
-            border-radius: 1rem;
-            padding: 2.5rem;
-            text-align: center;
-            color: white;
-        }
-
-        .playbook-card h2 {
-            font-family: 'Fraunces', serif;
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: white;
-        }
-
-        .playbook-card p {
-            font-size: 0.95rem;
-            color: #d4d4d4;
-            max-width: 540px;
-            margin: 0 auto 1.5rem;
-        }
-
-        .playbook-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            background: white;
-            color: var(--text-primary);
-            text-decoration: none;
-            border-radius: 0.5rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: transform 0.2s ease;
-        }
-
-        .playbook-btn:hover { transform: translateY(-2px); }
-        .playbook-btn svg { width: 1.1rem; height: 1.1rem; }
-
-        /* CTA */
-        .cta-section { text-align: center; padding: 3rem 0; border-top: 1px solid var(--border-subtle); }
-
-        .cta-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
-
-        .cta-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.25rem;
-            background: var(--accent-primary);
-            color: white;
-            text-decoration: none;
-            border-radius: 0.5rem;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .cta-link:hover { background: #1d4ed8; }
-
-        .cta-link.secondary {
-            background: var(--bg-subtle);
-            border: 1px solid var(--border-light);
-            color: var(--text-primary);
-        }
-
-        .cta-link.secondary:hover { border-color: var(--accent-primary); }
-
-        .cta-link svg { width: 1rem; height: 1rem; }
-
-        /* Disclosure */
-        .disclosure {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            max-width: 700px;
-            font-style: italic;
-            padding: 1.25rem;
-            background: var(--bg-subtle);
-            border-radius: 0.5rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 700px) {
-            .principles-grid,
-            .timeline,
-            .tiers {
-                grid-template-columns: 1fr;
-            }
-            .hero h1 { font-size: 2rem; }
-        }
-
-        @media (prefers-reduced-motion: no-preference) {
-            .curve-path {
-                stroke-dasharray: 1400;
-                stroke-dashoffset: 1400;
-                animation: draw 2.2s ease-out 0.3s forwards;
-            }
-        }
-
-        @keyframes draw { to { stroke-dashoffset: 0; } }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
+    <div class="progress-bar" id="progress"></div>
+
     <nav>
-        <div class="container nav-content">
+        <div class="nav-content">
             <a href="index.html" class="nav-logo">SK</a>
             <a href="index.html" class="nav-back">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
@@ -563,222 +200,351 @@
         </div>
     </nav>
 
-    <!-- Hero -->
-    <section class="hero">
-        <div class="container">
-            <span class="hero-label">Framework &middot; Implementation &amp; Customer Success</span>
-            <h1>The Adoption Gap</h1>
-            <p class="hero-subtitle">Complex B2B software gets bought, gets configured&hellip; and then a meaningful share of users quietly drift back to their spreadsheets. This is a reusable framework for closing the gap between a customer <em>buying</em> a platform and a customer actually <em>using</em> it.</p>
-            <p class="hero-thesis">Adoption is a behavior-change problem wearing a software costume. Configuring the platform is the easy part. The hard part is earning the trust of someone who was already good at the old way.</p>
+    <header class="opener">
+        <div class="wrap">
+            <div class="eyebrow reveal">Framework &middot; Implementation &amp; Customer Success</div>
+            <h1 class="reveal d1">Software doesn't fail<br>at install.<br><span class="hl">It fails at habit.</span></h1>
+            <p class="lede-line reveal d2">A company buys a platform to replace its spreadsheet chaos.</p>
+            <p class="lede-line reveal d3">It gets configured. People get trained.</p>
+            <p class="lede-line reveal d4">And then&hellip; <b>they quietly drift back to the spreadsheet.</b></p>
+            <div class="scroll-cue reveal d4">
+                Scroll to see why
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+            </div>
+        </div>
+    </header>
+
+    <section class="statement">
+        <div class="wrap">
+            <div class="kicker reveal">The core idea</div>
+            <p class="pull reveal d1">Adoption is a behavior-change problem wearing a software costume.</p>
+            <p class="reveal d2" style="margin-top:1.5rem;">Configuring the platform is the easy part. The hard part is earning the trust of someone who was already good at the old way &mdash; and who, the moment things get hard, has a spreadsheet waiting that always works.</p>
         </div>
     </section>
 
-    <!-- The signature visual: the trough curve -->
-    <section class="curve-section">
-        <div class="container">
-            <div class="curve-card">
-                <svg viewBox="0 0 820 440" role="img" xmlns="http://www.w3.org/2000/svg" aria-labelledby="curveTitle curveDesc">
-                    <title id="curveTitle">The adoption gap trough curve</title>
-                    <desc id="curveDesc">A chart comparing the steady value of a legacy spreadsheet workflow against a new platform, which dips into a low trough during onboarding before rising above the legacy line once adopted.</desc>
-                    <defs>
-                        <marker id="ag-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                            <path d="M2 1L8 5L2 9" fill="none" stroke="#059669" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                        </marker>
-                    </defs>
+    <section class="lab">
+        <div class="wrap">
+            <div class="kicker reveal">Try it yourself</div>
+            <h2 class="reveal d1">The whole framework, in one slider</h2>
+            <p class="sub reveal d2">Every new platform makes users worse off before it makes them better &mdash; effort first, payoff later. That dip is the trough, and it's where adoption dies. Drag the slider to change your approach &mdash; and watch the callouts show <strong style="color:#e8e8e8">what you did as the IM/CS lead</strong> and how the team reacts.</p>
 
-                    <!-- axes -->
-                    <line x1="70" y1="50" x2="70" y2="350" stroke="#d4d4d4" stroke-width="1"/>
-                    <line x1="70" y1="350" x2="770" y2="350" stroke="#d4d4d4" stroke-width="1"/>
-                    <text x="60" y="54" text-anchor="end" font-family="DM Sans, sans-serif" font-size="13" fill="#737373">value</text>
-                    <text x="770" y="372" text-anchor="end" font-family="DM Sans, sans-serif" font-size="13" fill="#737373">time</text>
+            <div class="curve-stage reveal d2">
+                <svg id="curve" viewBox="0 0 760 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Interactive chart: the adoption trough reshapes as you change time-to-first-value, with annotations showing the implementation and customer-success moves behind each result.">
+                    <line x1="60" y1="40" x2="60" y2="320" stroke="#3a3a3a" stroke-width="1.5"/>
+                    <line x1="60" y1="320" x2="710" y2="320" stroke="#3a3a3a" stroke-width="1.5"/>
+                    <text x="52" y="44" text-anchor="end" font-family="DM Sans" font-size="12" fill="#888">value</text>
+                    <text x="708" y="342" text-anchor="end" font-family="DM Sans" font-size="12" fill="#888">time</text>
+                    <line x1="60" y1="190" x2="710" y2="190" stroke="#888" stroke-width="2" stroke-dasharray="7 5"/>
+                    <text x="68" y="182" text-anchor="start" font-family="DM Sans" font-size="12" fill="#aaa">the old spreadsheet</text>
+                    <path id="troughFill" d="" fill="#dc2626" opacity="0.12"/>
+                    <path id="platform" d="" fill="none" stroke="#3b82f6" stroke-width="3.5" stroke-linecap="round"/>
 
-                    <!-- trough danger zone -->
-                    <rect x="250" y="250" width="220" height="100" fill="#fef2f2"/>
-                    <text x="360" y="330" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="13" font-weight="600" fill="#dc2626">the trough &mdash; where adoption dies</text>
+                    <!-- Annotation: early decision (near kickoff) -->
+                    <g id="annA">
+                        <line id="annA_leader" x1="0" y1="0" x2="0" y2="0" stroke="#555" stroke-width="1"/>
+                        <circle id="annA_dot" cx="0" cy="0" r="4.5" fill="#3b82f6"/>
+                        <text id="annA_move" x="0" y="0" font-family="DM Sans" font-size="12.5" font-weight="600" fill="#e8e8e8"></text>
+                        <text id="annA_react" x="0" y="0" font-family="DM Sans" font-size="11.5" fill="#9aa7c7"></text>
+                    </g>
 
-                    <!-- status quo line -->
-                    <line x1="70" y1="195" x2="770" y2="195" stroke="#737373" stroke-width="2" stroke-dasharray="7 5"/>
-                    <text x="770" y="184" text-anchor="end" font-family="DM Sans, sans-serif" font-size="13" fill="#525252">status quo (spreadsheet + email)</text>
+                    <!-- Annotation: the trough moment (skeptic reacts) -->
+                    <g id="annB">
+                        <line id="annB_leader" x1="0" y1="0" x2="0" y2="0" stroke="#555" stroke-width="1"/>
+                        <circle id="annB_dot" cx="0" cy="0" r="5.5" fill="#dc2626"/>
+                        <text id="annB_move" x="0" y="0" text-anchor="middle" font-family="DM Sans" font-size="12.5" font-weight="600" fill="#e8e8e8"></text>
+                        <text id="annB_react" x="0" y="0" text-anchor="middle" font-family="DM Sans" font-size="11.5" fill="#f0a8a8"></text>
+                    </g>
 
-                    <!-- platform curve -->
-                    <path class="curve-path" d="M70 190 C 170 186, 230 215, 320 295 C 365 335, 420 330, 470 250 C 540 138, 640 90, 770 78" fill="none" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
-                    <text x="755" y="68" text-anchor="end" font-family="DM Sans, sans-serif" font-size="13" font-weight="600" fill="#2563eb">platform, once adopted</text>
-
-                    <!-- milestone dots -->
-                    <circle cx="140" cy="188" r="5" fill="#2563eb"/>
-                    <text x="140" y="385" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="12" fill="#737373">kickoff</text>
-
-                    <circle cx="355" cy="312" r="5" fill="#dc2626"/>
-                    <text x="355" y="385" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="12" fill="#737373">onboarding effort</text>
-
-                    <circle cx="560" cy="118" r="5" fill="#059669"/>
-                    <text x="560" y="385" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="12" fill="#737373">first real win</text>
-
-                    <!-- shorten arrow -->
-                    <path d="M395 288 C 430 250, 450 230, 478 210" fill="none" stroke="#059669" stroke-width="1.8" marker-end="url(#ag-arrow)"/>
-                    <text x="430" y="278" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="12" font-weight="600" fill="#059669">the job: shorten this</text>
+                    <!-- Annotation: outcome (end point) -->
+                    <g id="annC">
+                        <circle id="endPoint" cx="710" cy="0" r="6" fill="#10b981"/>
+                        <text id="annC_move" x="700" y="0" text-anchor="end" font-family="DM Sans" font-size="12.5" font-weight="600" fill="#e8e8e8"></text>
+                        <text id="annC_react" x="700" y="0" text-anchor="end" font-family="DM Sans" font-size="11.5" fill="#86e0b8"></text>
+                    </g>
                 </svg>
-                <div class="curve-caption">
-                    <strong>The whole framework in one picture.</strong> Effort comes before payoff. During that trough, the path of least resistance is the old spreadsheet &mdash; so the job is to get to the first real win before the team relapses.
+                <div class="verdict" id="verdict"></div>
+                <div class="slider-row">
+                    <div class="slider-label">
+                        <span>Slow first win</span>
+                        <span class="now" id="sliderNow">Balanced</span>
+                        <span>Fast first win</span>
+                    </div>
+                    <input type="range" id="slider" min="0" max="100" value="50" aria-label="Time to first value: drag from slow to fast">
+                </div>
+                <p class="lab-hint">The curve is the result. The callouts are the cause &mdash; your playbook, in action.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="personas">
+        <div class="wrap">
+            <div class="sec-kicker reveal">Part 1 &middot; The people</div>
+            <h2 class="sec-h2 reveal d1" style="margin-bottom:0.75rem;">Five people. Five reasons to resist.</h2>
+            <p class="reveal d1" style="font-size:1.05rem;color:var(--text-secondary);max-width:580px;margin-bottom:2.5rem;">You can't move a team by treating "the customer" as one person. Each role weighs the switch differently &mdash; and one of them decides everything.</p>
+
+            <div class="persona-row reveal">
+                <div class="persona-num">01</div>
+                <div>
+                    <div class="persona-name">The Executive Sponsor</div>
+                    <div class="persona-detail"><span class="fear">Fears wasted spend.</span> Signs the deal, then vanishes &mdash; and the rollout loses its air-cover. <span class="move">Keep them warm with ROI updates.</span></div>
+                </div>
+            </div>
+            <div class="persona-row reveal">
+                <div class="persona-num">02</div>
+                <div>
+                    <div class="persona-name">The Champion</div>
+                    <div class="persona-detail"><span class="fear">Fears looking wrong</span> for backing it. Becomes the lone help-desk and burns out. <span class="move">Make them a hero, not a martyr.</span></div>
+                </div>
+            </div>
+            <div class="persona-row key reveal">
+                <div class="persona-num">03</div>
+                <div>
+                    <div class="persona-name">The Skeptical Practitioner <span class="linchpin">the linchpin</span></div>
+                    <div class="persona-detail"><span class="fear">Fears losing their mastery.</span> They were <em>great</em> at the spreadsheet &mdash; now they're a beginner again, so they keep a shadow copy. <span class="move">Win them with one fast win on a task they hate, and the team follows.</span></div>
+                </div>
+            </div>
+            <div class="persona-row reveal">
+                <div class="persona-num">04</div>
+                <div>
+                    <div class="persona-name">The Occasional User</div>
+                    <div class="persona-detail"><span class="fear">Fears friction.</span> One login snag and they email their request the old way &mdash; pulling everyone else back out. <span class="move">Give them a 90-second path to their one task.</span></div>
+                </div>
+            </div>
+            <div class="persona-row reveal">
+                <div class="persona-num">05</div>
+                <div>
+                    <div class="persona-name">The Admin / Gatekeeper</div>
+                    <div class="persona-detail"><span class="fear">Fears risk.</span> Security or integration gaps can stall the whole thing indefinitely. <span class="move">Engage them first, not in week six.</span></div>
+                </div>
+            </div>
+
+            <p class="reveal" style="margin-top:2rem;font-size:1.05rem;color:var(--text-secondary);max-width:620px;">The finish line isn't "go-live." It's the day the <strong style="color:var(--text-primary)">skeptic deletes their shadow spreadsheet.</strong></p>
+        </div>
+    </section>
+
+    <section class="timeline-sec">
+        <div class="wrap-wide">
+            <div class="sec-kicker reveal">Part 2 &middot; Implementation</div>
+            <h2 class="sec-h2 reveal d1">Don't boil the ocean. Land one win.</h2>
+            <div class="track">
+                <div class="stop s1 reveal d1">
+                    <div class="stop-dot"></div>
+                    <div class="stop-card">
+                        <div class="stop-days">Days 0&ndash;30</div>
+                        <h3>Land one win</h3>
+                        <p>Pick one high-pain workflow. Configure only what it needs. Train the champion and skeptic on their real data. Run it once, end to end.</p>
+                        <div class="stop-win"><b>Win:</b> one real workflow lives in the platform.</div>
+                    </div>
+                </div>
+                <div class="stop s2 reveal d2">
+                    <div class="stop-dot"></div>
+                    <div class="stop-card">
+                        <div class="stop-days">Days 31&ndash;60</div>
+                        <h3>Build the habit</h3>
+                        <p>Roll out to the team. Target the skeptic directly. Hunt the shadow spreadsheet. Read the health score for the first time.</p>
+                        <div class="stop-win"><b>Win:</b> the platform becomes the default.</div>
+                    </div>
+                </div>
+                <div class="stop s3 reveal d3">
+                    <div class="stop-dot"></div>
+                    <div class="stop-card">
+                        <div class="stop-days">Days 61&ndash;90</div>
+                        <h3>Widen &amp; prove ROI</h3>
+                        <p>Add a second workflow now that trust exists. Bring the sponsor a results story tied to why they bought it.</p>
+                        <div class="stop-win"><b>Win:</b> a clear path to renewal.</div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Origin: real experience -->
-    <section class="origin-section">
-        <div class="container">
-            <span class="section-label">Where this comes from</span>
-            <h2 class="section-title">I learned this on a real migration, not a whiteboard</h2>
-            <div class="origin-card">
-                <div class="eyebrow">Grounded in real work</div>
-                <p>On a Fortune 500 Azure migration, I built reusable migration templates, pre-mapped every risk and blocker with a response plan before a two-day go-live, and stood up a Power BI dashboard so leadership could see status at a glance. Nothing was a surprise on go-live day because we already knew the playbook.</p>
-                <p>This framework is the <strong>generalized version of what worked there</strong> &mdash; the system I'd want in hand on day one of any complex rollout, written down so it's repeatable instead of re-invented each time.</p>
-                <a href="case-study.html" class="origin-link">
-                    See the Azure migration case study
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </a>
-            </div>
-        </div>
-    </section>
+    <section class="health-sec">
+        <div class="wrap">
+            <div class="sec-kicker reveal">Part 3 &middot; Customer Success</div>
+            <h2 class="sec-h2 reveal d1" style="margin-bottom:1.25rem;">"Live" is not "adopted."</h2>
+            <p class="lead reveal d1">A health score is only useful if it tracks what actually predicts retention. The deepest signal is simple: <b>has the work moved into the platform, or is it still happening somewhere else?</b></p>
+            <p class="signal-line reveal d2"><b>Weighted:</b> migration depth (30%) &middot; active-user breadth (25%) &middot; engagement depth (20%) &middot; key-feature use (15%) &middot; sentiment (10%). Logins are a vanity metric &mdash; every signal here is built to catch reversion.</p>
 
-    <!-- Operating principles -->
-    <section class="principles-section">
-        <div class="container">
-            <span class="section-label">How I work</span>
-            <h2 class="section-title">Three operating principles</h2>
-            <div class="principles-grid">
-                <div class="principle-card">
-                    <div class="num">01</div>
-                    <h3>Listen first</h3>
-                    <p>The client bought this for a reason. The job isn't to push features &mdash; it's to show them that reason in play.</p>
+            <div class="tier-stack">
+                <div class="tier-card g reveal d1">
+                    <div class="tier-icon">🟢</div>
+                    <div class="tier-body"><h3>Healthy</h3><p>Across the trough. Workflow migrated, team active, key features in use.</p></div>
+                    <div class="tier-play"><b>Play:</b> protect &amp; grow. Reinforce ROI; look for expansion.</div>
                 </div>
-                <div class="principle-card">
-                    <div class="num">02</div>
-                    <h3>Push back honestly</h3>
-                    <p>No false hopes, no dismissing concerns. Both break trust, and adoption runs entirely on trust.</p>
+                <div class="tier-card a reveal d2">
+                    <div class="tier-icon">🟡</div>
+                    <div class="tier-body"><h3>At risk</h3><p>Stuck in the trough. Narrow adoption, or engagement slipping after a strong start.</p></div>
+                    <div class="tier-play"><b>Play:</b> intervene now. Find the weak signal and target it. This is where CS earns its keep.</div>
                 </div>
-                <div class="principle-card">
-                    <div class="num">03</div>
-                    <h3>Value before features</h3>
-                    <p>Get them to the win that made them buy, fast. The feature tour can wait until they care.</p>
+                <div class="tier-card r reveal d3">
+                    <div class="tier-icon">🔴</div>
+                    <div class="tier-body"><h3>Critical</h3><p>Sliding back to the old way &mdash; and may not even realize it's churning.</p></div>
+                    <div class="tier-play"><b>Play:</b> escalate. Re-establish the "why," re-run a compressed onboarding around one new win.</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Personas -->
-    <section>
-        <div class="container">
-            <span class="section-label">Part 1 &middot; The people</span>
-            <h2 class="section-title">Map who resists, and why</h2>
-            <p class="prose" style="margin-bottom: 1.5rem;">You can't drive adoption across a team by treating "the customer" as one entity. A complex platform touches several roles at once, and each weighs the switch differently. The job is to know who's in the trough and what's keeping them there.</p>
-            <div class="persona-table-wrap">
-                <table class="personas">
-                    <thead>
-                        <tr><th>Persona</th><th>What they fear</th><th>Failure mode if ignored</th><th>The move</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td><strong>Executive sponsor</strong></td><td>Wasted spend</td><td>Disengages, no air-cover</td><td>Milestone updates tied to ROI</td></tr>
-                        <tr><td><strong>Champion</strong></td><td>Looking wrong</td><td>Burns out, single point of failure</td><td>Invest, then distribute knowledge</td></tr>
-                        <tr class="key-row"><td><strong>Skeptical practitioner</strong><span class="key-tag">the linchpin</span></td><td>Losing mastery</td><td>Keeps a shadow spreadsheet</td><td>One fast win on a hated task</td></tr>
-                        <tr><td><strong>Occasional user</strong></td><td>Friction</td><td>Reverts to email, drags others back</td><td>Minimize their surface area</td></tr>
-                        <tr><td><strong>Admin / gatekeeper</strong></td><td>Risk</td><td>Blocks rollout indefinitely</td><td>Engage first, not last</td></tr>
-                    </tbody>
-                </table>
-            </div>
-            <p class="prose" style="margin-top: 1.5rem;">Adoption happens when the <strong>skeptical practitioner</strong> stops keeping a shadow spreadsheet and the <strong>occasional user</strong> stops emailing requests. Those two conversions are the real finish line.</p>
+    <section class="origin-sec">
+        <div class="wrap">
+            <div class="kicker reveal">Where this comes from</div>
+            <h2 class="reveal d1">I learned this on a real migration, not a whiteboard.</h2>
+            <p class="reveal d1">On a Fortune 500 Azure migration, I built reusable templates, pre-mapped every blocker before a two-day go-live, and stood up a Power BI dashboard so leadership could see status at a glance. Nothing was a surprise on go-live day &mdash; because we already knew the playbook.</p>
+            <p class="reveal d2">This framework is the <strong>generalized version of what worked there</strong>: the system I'd want in hand on day one of any complex rollout.</p>
+            <a href="cloud-migration.html" class="origin-link reveal d2">
+                See the Azure migration case study
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            </a>
         </div>
     </section>
 
-    <!-- 30-60-90 -->
-    <section class="timeline-section">
-        <div class="container">
-            <span class="section-label">Part 2 &middot; Implementation</span>
-            <h2 class="section-title">Onboarding, organized around the first win</h2>
-            <div class="timeline">
-                <div class="phase-card p1">
-                    <div class="phase-days">Days 0&ndash;30</div>
-                    <h3>Land one win</h3>
-                    <p>Pick one high-pain, self-contained workflow. Configure only what it needs. Train the champion and the skeptic on their real data. Run it end-to-end once.</p>
-                    <div class="phase-win"><strong>Success:</strong> one real workflow has run in the platform, and the sponsor has a win to report.</div>
-                </div>
-                <div class="phase-card p2">
-                    <div class="phase-days">Days 31&ndash;60</div>
-                    <h3>Build the habit</h3>
-                    <p>Bring the rest of the team onto the proven workflow. Target the skeptic directly. Watch for the shadow spreadsheet. Run the health score for the first time.</p>
-                    <div class="phase-win"><strong>Success:</strong> the workflow is the default, and the skeptic has stopped maintaining a shadow copy.</div>
-                </div>
-                <div class="phase-card p3">
-                    <div class="phase-days">Days 61&ndash;90</div>
-                    <h3>Widen &amp; prove ROI</h3>
-                    <p>Add a second workflow now that trust exists. Bring the sponsor a results story tied to the original business case. Transition to steady-state success.</p>
-                    <div class="phase-win"><strong>Success:</strong> two workflows live, value demonstrated, a clear path to renewal.</div>
-                </div>
-            </div>
+    <section class="honesty">
+        <div class="wrap">
+            <p class="reveal">A note on honesty: this is grounded in real migration work, but the personas, thresholds, and examples are illustrative &mdash; I haven't invented fake customer data. The value is the thinking: how I'd diagnose an adoption problem, sequence an onboarding, and catch churn early. In a role, these get filled in with real signals.</p>
         </div>
     </section>
 
-    <!-- Health score -->
-    <section class="health-section">
-        <div class="container">
-            <span class="section-label">Part 3 &middot; Customer Success</span>
-            <h2 class="section-title">Detect who's sliding back &mdash; early</h2>
-            <p class="prose">"They went live" is not "they adopted." A health score is only useful if it tracks the behaviors that actually predict retention. The deepest signal is simple: <strong>has the work genuinely moved into the platform, or is it still happening somewhere else?</strong></p>
-            <p class="signals-note"><strong>What's weighted:</strong> workflow migration depth (30%) &middot; breadth of active users (25%) &middot; engagement depth (20%) &middot; key-feature adoption (15%) &middot; relationship &amp; sentiment (10%). Logins are a vanity metric &mdash; every signal here is chosen to detect reversion to the old way.</p>
-            <div class="tiers">
-                <div class="tier green">
-                    <span class="tier-dot"></span><h3>Healthy</h3>
-                    <div class="state">Across the trough. Workflow migrated, multiple users active, key features in use.</div>
-                    <div class="play"><strong>Play:</strong> protect and grow. Reinforce ROI with the sponsor; look for expansion.</div>
-                </div>
-                <div class="tier amber">
-                    <span class="tier-dot"></span><h3>At risk</h3>
-                    <div class="state">Sitting in the trough, could go either way. Narrow adoption or slipping engagement.</div>
-                    <div class="play"><strong>Play:</strong> intervene now. Diagnose the weak signal and target it. This is where good CS earns its keep.</div>
-                </div>
-                <div class="tier red">
-                    <span class="tier-dot"></span><h3>Critical</h3>
-                    <div class="state">Sliding back to the old way &mdash; and may not realize it's churning.</div>
-                    <div class="play"><strong>Play:</strong> escalate. Re-establish the "why," and re-run a compressed onboarding around one new win.</div>
-                </div>
-            </div>
-            <p class="signals-note" style="margin-top: 1.5rem;">A health score with no playbook attached is just a dashboard. Each tier maps to a default action, and each weak signal maps to a specific fix.</p>
-        </div>
-    </section>
-
-    <!-- Read the full playbook -->
-    <section class="playbook-section">
-        <div class="container">
-            <div class="playbook-card">
-                <h2>Read the full playbook</h2>
-                <p>The complete framework &mdash; persona deep-dives, the stumbling-blocks runbook, kickoff and success-plan templates, and a worked example &mdash; lives as a documented repo on GitHub.</p>
-                <a href="https://github.com/" class="playbook-btn" target="_blank" rel="noopener">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.68.92.68 1.85 0 1.34-.01 2.42-.01 2.75 0 .27.18.58.69.48A10.01 10.01 0 0022 12c0-5.52-4.48-10-10-10z"/></svg>
-                    View the repo
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Honesty disclosure -->
-    <section style="padding-top: 0;">
-        <div class="container">
-            <p class="disclosure">A note on honesty: the framework is grounded in real migration work, but the personas, thresholds, and worked example are illustrative &mdash; I haven't invented fake customer data. The value is the thinking: how I'd diagnose an adoption problem, sequence an onboarding, and build an early warning system for churn. In a role, these get filled in with real signals and real context.</p>
-        </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="cta-section">
-        <div class="container">
-            <div class="cta-links">
-                <a href="index.html" class="cta-link">
+    <section class="end">
+        <div class="wrap">
+            <div class="end-links reveal">
+                <a href="index.html" class="btn btn-primary">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                     Back to Portfolio
                 </a>
-                <a href="case-study.html" class="cta-link secondary">View the Azure Migration Case Study</a>
+                <a href="cloud-migration.html" class="btn btn-secondary">View the Azure Migration Case Study</a>
             </div>
         </div>
     </section>
+
+    <script>
+        const progress = document.getElementById('progress');
+        function updateProgress() {
+            const h = document.documentElement;
+            const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight);
+            progress.style.width = (scrolled * 100) + '%';
+        }
+        window.addEventListener('scroll', updateProgress, { passive: true });
+        updateProgress();
+
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduceMotion) {
+            document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+        } else {
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+            }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+            document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+        }
+
+        (function () {
+            const slider = document.getElementById('slider');
+            const platform = document.getElementById('platform');
+            const troughFill = document.getElementById('troughFill');
+            const endPoint = document.getElementById('endPoint');
+            const verdict = document.getElementById('verdict');
+            const sliderNow = document.getElementById('sliderNow');
+
+            // annotation A (early), B (trough), C (outcome)
+            const A = { dot:annA_dot, leader:annA_leader, move:annA_move, react:annA_react };
+            const B = { dot:annB_dot, leader:annB_leader, move:annB_move, react:annB_react };
+            const C = { move:annC_move, react:annC_react };
+
+            const X0 = 60, X1 = 710, STATUS_Y = 190, START_Y = 188;
+            function lerp(a, b, t) { return a + (b - a) * t; }
+
+            // cubic bezier point at parameter u for segment p0->p3 with controls p1,p2
+            function cubicY(p0, p1, p2, p3, u) {
+                const m = 1 - u;
+                return m*m*m*p0 + 3*m*m*u*p1 + 3*m*u*u*p2 + u*u*u*p3;
+            }
+
+            // content by zone
+            const ZONES = [
+                { // 0 - slow
+                    max: 0.28, label: 'Slow', verdict: '😬 Deep trough. They reverted.', vColor: '#f87171',
+                    a: { move: 'Big-bang go-live', react: 'Sponsor checks out' },
+                    b: { move: 'Skeptic ignored', react: '→ keeps a shadow spreadsheet' },
+                    c: { move: 'Feature tour, no win', react: 'Team back in Excel' }
+                },
+                { // 1 - balanced
+                    max: 0.62, label: 'Balanced', verdict: '🤔 Still risky — it hangs in the balance.', vColor: '#fbbf24',
+                    a: { move: 'Some scoping done', react: 'Sponsor half-engaged' },
+                    b: { move: 'Skeptic still unsure', react: '→ partial adoption' },
+                    c: { move: 'One workflow live', react: 'Habit not yet set' }
+                },
+                { // 2 - fast
+                    max: 0.85, label: 'Fast', verdict: '🙂 Short trough. The habit is forming.', vColor: '#34d399',
+                    a: { move: 'Landed one workflow first', react: 'Sponsor sees ROI early' },
+                    b: { move: 'Converted the skeptic', react: '→ shadow sheet shrinking' },
+                    c: { move: 'Second workflow added', react: 'Team adopting' }
+                },
+                { // 3 - very fast
+                    max: 1.01, label: 'Very fast', verdict: '🚀 Adopted. The spreadsheet is gone.', vColor: '#34d399',
+                    a: { move: 'Pre-cleared the gatekeeper', react: 'Zero blockers at launch' },
+                    b: { move: 'Skeptic got a fast win', react: '→ deleted the shadow sheet' },
+                    c: { move: 'ROI proven to sponsor', react: 'Renewal + expansion' }
+                }
+            ];
+            function zoneFor(t) { return ZONES.find(z => t < z.max) || ZONES[ZONES.length-1]; }
+
+            function render(v) {
+                const t = v / 100;
+                const troughY = lerp(305, 205, t);
+                const troughX = lerp(430, 250, t);
+                const endY = lerp(232, 70, t);   // slow ends BELOW the spreadsheet line (235=below 190); fast climbs high
+
+                // segment 1 controls: p0=(X0,START_Y) c1 c2 p3=(troughX,troughY)
+                const s1 = { p0:START_Y, c1:START_Y-4, c2:troughY-30, p3:troughY };
+                // segment 2 controls: p0=(troughX,troughY) c1 c2 p3=(X1,endY)
+                const mid = lerp(troughY, endY, 0.5);
+                const s2 = { p0:troughY, c1:troughY+18, c2:mid, p3:endY };
+
+                const d = `M ${X0} ${START_Y} `
+                        + `C ${X0+90} ${s1.c1}, ${troughX-110} ${s1.c2}, ${troughX} ${troughY} `
+                        + `C ${troughX+90} ${s2.c1}, ${lerp(troughX+120,560,0.5)} ${s2.c2}, ${X1} ${endY}`;
+                platform.setAttribute('d', d);
+
+                const fillEndY = Math.min(endY, STATUS_Y);
+                const fillMid = lerp(troughY, fillEndY, 0.5);
+                const fill = `M ${X0} ${STATUS_Y} `
+                        + `C ${X0+90} ${STATUS_Y}, ${troughX-110} ${s1.c2}, ${troughX} ${troughY} `
+                        + `C ${troughX+90} ${s2.c1}, ${lerp(troughX+120,560,0.5)} ${fillMid}, ${X1} ${fillEndY} `
+                        + `L ${X1} ${STATUS_Y} Z`;
+                troughFill.setAttribute('d', fill);
+
+                const z = zoneFor(t);
+
+                // --- Annotation A: early point, ~42% along segment 1 ---
+                const aX = lerp(X0, troughX, 0.42);
+                const aU = 0.42;
+                const aY = cubicY(START_Y, s1.c1, s1.c2, troughY, aU);
+                const aLift = 52;
+                A.dot.setAttribute('cx', aX); A.dot.setAttribute('cy', aY);
+                A.leader.setAttribute('x1', aX); A.leader.setAttribute('y1', aY);
+                A.leader.setAttribute('x2', aX); A.leader.setAttribute('y2', aY - aLift);
+                A.move.setAttribute('x', aX - 4); A.move.setAttribute('y', aY - aLift - 6); A.move.textContent = z.a.move;
+                A.react.setAttribute('x', aX - 4); A.react.setAttribute('y', aY - aLift + 10); A.react.textContent = z.a.react;
+
+                // --- Annotation B: the trough bottom ---
+                B.dot.setAttribute('cx', troughX); B.dot.setAttribute('cy', troughY);
+                B.leader.setAttribute('x1', troughX); B.leader.setAttribute('y1', troughY);
+                B.leader.setAttribute('x2', troughX); B.leader.setAttribute('y2', troughY + 22);
+                B.move.setAttribute('x', troughX); B.move.setAttribute('y', troughY + 40); B.move.textContent = z.b.move;
+                B.react.setAttribute('x', troughX); B.react.setAttribute('y', troughY + 56); B.react.textContent = z.b.react;
+
+                // --- Annotation C: end point ---
+                endPoint.setAttribute('cy', endY);
+                C.move.setAttribute('y', endY - 18); C.move.textContent = z.c.move;
+                C.react.setAttribute('y', endY - 3); C.react.textContent = z.c.react;
+
+                verdict.textContent = z.verdict;
+                verdict.style.color = z.vColor;
+                sliderNow.textContent = z.label;
+            }
+
+            slider.addEventListener('input', e => render(+e.target.value));
+            render(50);
+        })();
+    </script>
 </body>
 </html>
